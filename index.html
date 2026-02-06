@@ -67,22 +67,8 @@
       <div class="filter-group">
         <label for="minPrice">Price Range (TZS)</label>
         <div class="price-row">
-          <select name="minPrice" id="minPrice">
-            <option value="">Min</option>
-            <option value="500000">500K</option>
-            <option value="1000000">1M</option>
-            <option value="50000000">50M</option>
-            <option value="500000000">500M</option>
-            <option value="1000000000">1B</option>
-          </select>
-          <select name="maxPrice" id="maxPrice">
-            <option value="">Max</option>
-            <option value="5000000">5M</option>
-            <option value="50000000">50M</option>
-            <option value="500000000">500M</option>
-            <option value="2000000000">2B</option>
-            <option value="5000000000">5B+</option>
-          </select>
+          <input type="number" name="minPrice" id="minPrice" placeholder="Min amount" min="0" step="100000" inputmode="numeric">
+          <input type="number" name="maxPrice" id="maxPrice" placeholder="Max amount" min="0" step="100000" inputmode="numeric">
         </div>
       </div>
       <div class="filter-group">

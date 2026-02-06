@@ -323,13 +323,20 @@ p {
   color: var(--text-dark);
 }
 
-.filter-group select {
+.filter-group select,
+.filter-group input[type="number"] {
   width: 100%;
   padding: 0.75rem 1rem;
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   font-size: clamp(0.9rem, 2vw, 1rem);
   background: var(--bg-white);
+  font-family: inherit;
+}
+
+.filter-group input[type="number"]:focus {
+  outline: none;
+  border-color: var(--accent);
 }
 
 /* Price range: min + max stacked in same group */
