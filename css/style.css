@@ -1,5 +1,5 @@
 /* ============================================
-   ROLA REAL ESTATE - Main Stylesheet
+   LORA REAL ESTATE - Main Stylesheet
    Modern, professional, mobile-first design
    ============================================ */
 
@@ -838,11 +838,10 @@ p {
 
 .property-book-visit {
   margin: 2rem 0;
-  text-align: center;
-}
-
-.property-book-visit .btn {
-  margin: 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
 }
 
 .btn-lg {
@@ -1050,14 +1049,25 @@ p {
 }
 
 .contact-icons-glass .contact-icon-btn {
-  background: rgba(30, 58, 95, 0.2) !important;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.5);
+  background: var(--primary) !important;
+  color: white !important;
+  border: 2px solid var(--primary);
+  box-shadow: var(--shadow);
+}
+
+.contact-icons-glass .contact-icon-btn:hover {
+  background: var(--primary-light) !important;
+  border-color: var(--primary-light);
 }
 
 .contact-icons-glass .contact-icon-whatsapp {
-  background: rgba(37, 211, 102, 0.3) !important;
+  background: #25D366 !important;
+  border-color: #25D366;
+}
+
+.contact-icons-glass .contact-icon-whatsapp:hover {
+  background: #20bd5a !important;
+  border-color: #20bd5a;
 }
 
 .form-group {
@@ -1248,23 +1258,31 @@ p {
 
   .nav-menu {
     position: fixed;
-    top: clamp(52px, 12vw, 60px);
-    left: 0;
+    top: 0;
     right: 0;
+    bottom: 0;
+    width: min(280px, 85vw);
     background: var(--bg-white);
     flex-direction: column;
-    padding: clamp(1.5rem, 4vw, 2rem);
-    box-shadow: var(--shadow);
-    transform: translateY(-100%);
-    opacity: 0;
+    padding: clamp(3rem, 8vw, 4rem) clamp(1.5rem, 4vw, 2rem) clamp(1.5rem, 4vw, 2rem);
+    box-shadow: -4px 0 24px rgba(0, 0, 0, 0.15);
+    transform: translateX(100%);
+    opacity: 1;
     visibility: hidden;
-    transition: all var(--transition);
+    transition: transform var(--transition), visibility var(--transition);
+    justify-content: flex-start;
+    gap: 0.5rem;
   }
 
   .nav-menu.open {
-    transform: translateY(0);
-    opacity: 1;
+    transform: translateX(0);
     visibility: visible;
+  }
+
+  .nav-menu a {
+    padding: 0.75rem 0;
+    font-size: 1.1rem;
+    border-bottom: 1px solid var(--border);
   }
 
   .filter-form {
@@ -1362,6 +1380,10 @@ p {
   .contact-icon-btn svg {
     width: 20px;
     height: 20px;
+  }
+
+  .contact-form h3 {
+    text-align: center;
   }
 
   .property-detail-header {

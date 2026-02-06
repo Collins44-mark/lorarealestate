@@ -1,4 +1,4 @@
-# Rola Real Estate
+# Lora Real Estate
 
 A modern, professional real estate website for buying and renting properties.
 
@@ -27,7 +27,7 @@ A modern, professional real estate website for buying and renting properties.
 
 2. Update the WhatsApp number in `js/script.js` and in each HTML file (search for `1234567890`).
 
-3. Add your logo: place `logo.png` in the `/images/` folder. The header and footer will display it; if missing, text "Rola Real Estate" shows instead.
+3. Add your logo: place `logo.png` in the `/images/` folder. The header and footer will display it; if missing, text "Lora Real Estate" shows instead.
 
 4. Replace property images in `js/properties.js` with your own URLs, or add images to `/images/` and reference them.
 

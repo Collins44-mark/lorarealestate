@@ -1,11 +1,11 @@
 /**
- * ROLA REAL ESTATE - Main JavaScript
+ * LORA REAL ESTATE - Main JavaScript
  * Handles navigation, property filtering, WhatsApp, and shared UI
  */
 
 // WhatsApp configuration - update with your business number (include country code, no + or spaces)
 const WHATSAPP_NUMBER = "255788275367";
-const DEFAULT_MESSAGE = "Hello, I am interested in this property from Rola Real Estate. Please share more details.";
+const DEFAULT_MESSAGE = "Hello, I am interested in this property from Lora Real Estate. Please share more details.";
 
 /**
  * Initialize mobile navigation toggle
@@ -15,11 +15,22 @@ function initNavToggle() {
   const menu = document.querySelector('.nav-menu');
   if (toggle && menu) {
     toggle.addEventListener('click', () => {
-      menu.classList.toggle('open');
+      const isOpen = menu.classList.toggle('open');
+      document.body.style.overflow = isOpen ? 'hidden' : '';
     });
     // Close menu when clicking a link
     menu.querySelectorAll('a').forEach(link => {
-      link.addEventListener('click', () => menu.classList.remove('open'));
+      link.addEventListener('click', () => {
+        menu.classList.remove('open');
+        document.body.style.overflow = '';
+      });
+    });
+    // Close menu when clicking backdrop (outside menu)
+    document.addEventListener('click', (e) => {
+      if (menu.classList.contains('open') && !menu.contains(e.target) && !toggle.contains(e.target)) {
+        menu.classList.remove('open');
+        document.body.style.overflow = '';
+      }
     });
   }
 }
@@ -68,7 +79,7 @@ function getWhatsAppLink(message = DEFAULT_MESSAGE) {
  */
 function openWhatsAppInquiry(property) {
   const message = property
-    ? `Hello, I am interested in this property from Rola Real Estate: ${property.title}. Please share more details.`
+    ? `Hello, I am interested in this property from Lora Real Estate: ${property.title}. Please share more details.`
     : DEFAULT_MESSAGE;
   window.open(getWhatsAppLink(message), '_blank');
 }

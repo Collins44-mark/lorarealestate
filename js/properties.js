@@ -1,5 +1,5 @@
 /**
- * ROLA REAL ESTATE - Property Data
+ * LORA REAL ESTATE - Property Data
  * Locations: Dar es Salaam, Tanzania | Currency: TZS
  * Structured for easy replacement with API/database later
  */
