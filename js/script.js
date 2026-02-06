@@ -4,7 +4,7 @@
  */
 
 // WhatsApp configuration - update with your business number (include country code, no + or spaces)
-const WHATSAPP_NUMBER = "255712345678";
+const WHATSAPP_NUMBER = "255788275367";
 const DEFAULT_MESSAGE = "Hello, I am interested in this property from Rola Real Estate. Please share more details.";
 
 /**
