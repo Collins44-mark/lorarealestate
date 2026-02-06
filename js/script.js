@@ -13,26 +13,47 @@ const DEFAULT_MESSAGE = "Hello, I am interested in this property from Lora Real 
 function initNavToggle() {
   const toggle = document.querySelector('.nav-toggle');
   const menu = document.querySelector('.nav-menu');
-  if (toggle && menu) {
-    toggle.addEventListener('click', () => {
-      const isOpen = menu.classList.toggle('open');
-      document.body.style.overflow = isOpen ? 'hidden' : '';
-    });
-    // Close menu when clicking a link
-    menu.querySelectorAll('a').forEach(link => {
-      link.addEventListener('click', () => {
-        menu.classList.remove('open');
-        document.body.style.overflow = '';
-      });
-    });
-    // Close menu when clicking backdrop (outside menu)
-    document.addEventListener('click', (e) => {
-      if (menu.classList.contains('open') && !menu.contains(e.target) && !toggle.contains(e.target)) {
-        menu.classList.remove('open');
-        document.body.style.overflow = '';
-      }
-    });
+  if (!toggle || !menu) return;
+
+  // Create backdrop and close button for mobile
+  let backdrop = document.querySelector('.nav-backdrop');
+  if (!backdrop) {
+    backdrop = document.createElement('div');
+    backdrop.className = 'nav-backdrop';
+    backdrop.setAttribute('aria-hidden', 'true');
+    menu.parentNode.insertBefore(backdrop, menu);
   }
+
+  const closeBtn = document.createElement('button');
+  closeBtn.className = 'nav-close';
+  closeBtn.setAttribute('aria-label', 'Close menu');
+  closeBtn.innerHTML = '&times;';
+  closeBtn.type = 'button';
+  menu.insertBefore(closeBtn, menu.firstChild);
+
+  function closeMenu() {
+    menu.classList.remove('open');
+    backdrop.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  function openMenu() {
+    menu.classList.add('open');
+    backdrop.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  toggle.addEventListener('click', () => {
+    if (menu.classList.contains('open')) closeMenu();
+    else openMenu();
+  });
+
+  closeBtn.addEventListener('click', closeMenu);
+  backdrop.addEventListener('click', closeMenu);
+
+  menu.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', closeMenu);
+  });
 }
 
 /**
