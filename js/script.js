@@ -116,9 +116,9 @@ function createPropertyCard(property) {
   const badgeText = property.status === 'sale' ? 'For Sale' : 'For Rent';
   const features = property.bedrooms && property.size
     ? `<div class="property-features">
-         <span>🛏️ ${property.bedrooms} Beds</span>
-         <span>🛁 ${property.bathrooms} Baths</span>
-         <span>📐 ${property.size} m²</span>
+         <span>${property.bedrooms} Beds</span>
+         <span>${property.bathrooms} Baths</span>
+         <span>${property.size} m²</span>
        </div>`
     : '';
 

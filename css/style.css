@@ -780,6 +780,40 @@ p {
   margin-bottom: 0.75rem;
 }
 
+/* Property video */
+.property-video {
+  margin: 2rem 0;
+  padding: 1.5rem 0;
+  border-top: 1px solid var(--border);
+}
+
+.property-video h2 {
+  margin-bottom: 1rem;
+}
+
+.property-video-wrapper {
+  position: relative;
+  width: 100%;
+  padding-bottom: 56.25%;
+  background: var(--bg-light);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.property-video-wrapper iframe,
+.property-video-wrapper video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+.property-video-wrapper video {
+  object-fit: contain;
+}
+
 /* Property details summary */
 .property-details-summary {
   margin: 2rem 0;

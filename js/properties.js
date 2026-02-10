@@ -22,6 +22,7 @@ var PROPERTIES = [
       { url: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800", label: "Kitchen" },
       { url: "https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?w=800", label: "Pool & Garden" }
     ],
+    video: "https://www.youtube.com/watch?v=lxL2R8xZb1k",
     featured: true
   },
   {

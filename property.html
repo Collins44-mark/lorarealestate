@@ -155,6 +155,30 @@
         </div>
       `).join('');
 
+      function getVideoHtml(videoUrl) {
+        if (!videoUrl) return '';
+        const u = videoUrl.trim();
+        let embedSrc = '';
+        if (u.includes('youtube.com/watch?v=')) embedSrc = 'https://www.youtube.com/embed/' + u.split('v=')[1].split('&')[0];
+        else if (u.includes('youtu.be/')) embedSrc = 'https://www.youtube.com/embed/' + u.split('youtu.be/')[1].split('?')[0];
+        if (embedSrc) {
+          return `<div class="property-video">
+            <h2>Property Video</h2>
+            <div class="property-video-wrapper">
+              <iframe src="${embedSrc}" title="Property video" allowfullscreen></iframe>
+            </div>
+          </div>`;
+        }
+        return `<div class="property-video">
+          <h2>Property Video</h2>
+          <div class="property-video-wrapper">
+            <video src="${u}" controls playsinline></video>
+          </div>
+        </div>`;
+      }
+
+      const videoHtml = getVideoHtml(property.video);
+
       container.innerHTML = `
         <div class="property-gallery">
           <div class="property-gallery-main">
@@ -186,6 +210,7 @@
             <span><strong>${property.bathrooms}</strong> Bathrooms</span>
             <span><strong>${property.size} m²</strong> Size</span>
           </div>
+          ${videoHtml}
           <div class="property-description">
             <h2>Full Description</h2>
             <p>${property.description}</p>
