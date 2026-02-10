@@ -121,7 +121,8 @@ p {
   color: var(--primary);
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.6rem;
+  min-width: 0; /* allow text truncation on small screens */
 }
 
 .logo span,
@@ -129,9 +130,29 @@ p {
   color: var(--accent);
 }
 
+.logo-link {
+  transition: transform var(--transition), opacity var(--transition);
+  will-change: transform;
+}
+
+.logo-link:hover {
+  opacity: 0.95;
+  transform: scale(1.01);
+}
+
+.logo-text {
+  font-weight: 600; /* semi-bold */
+  letter-spacing: 0.4px;
+  line-height: 1.05;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: clamp(1.05rem, 3vw, 1.35rem);
+}
+
 .logo-container {
-  width: 44px;
-  height: 44px;
+  width: clamp(48px, 6vw, 56px);
+  height: clamp(48px, 6vw, 56px);
   border-radius: 50%;
   overflow: hidden;
   flex-shrink: 0;
@@ -144,7 +165,27 @@ p {
 .logo-img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain; /* keep aspect ratio, avoid cropping */
+  padding: 6px; /* clean spacing inside circle */
+  image-rendering: -webkit-optimize-contrast;
+  transform: translateZ(0); /* crisp rendering on some GPUs */
+}
+
+@media (max-width: 420px) {
+  .logo {
+    gap: 0.5rem;
+  }
+
+  .logo-text {
+    letter-spacing: 0.3px;
+  }
+}
+
+@media (max-width: 360px) {
+  /* Keep the header clean on extra small phones */
+  .logo-text span {
+    display: none;
+  }
 }
 
 .nav-toggle {
@@ -556,8 +597,8 @@ p {
 }
 
 .footer-logo-container {
-  width: 40px;
-  height: 40px;
+  width: clamp(36px, 6vw, 44px);
+  height: clamp(36px, 6vw, 44px);
   border-radius: 50%;
   overflow: hidden;
   flex-shrink: 0;
@@ -570,7 +611,9 @@ p {
 .footer-logo-img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
+  padding: 5px;
+  image-rendering: -webkit-optimize-contrast;
 }
 
 .footer-tagline {
