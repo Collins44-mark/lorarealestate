@@ -86,14 +86,27 @@
     </a>
   </div>
 
-  <script src="js/properties.js"></script>
   <script src="js/script.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      const sales = getPropertiesByStatus('sale');
       const params = new URLSearchParams(window.location.search);
-      const filtered = filterByParams(sales, params);
-      renderPropertyGrid('buyProperties', filtered);
+      (async () => {
+        try {
+          const location = (params.get('location') || '').trim();
+          const min_price = (params.get('min_price') || '').trim();
+          const max_price = (params.get('max_price') || '').trim();
+          const items = await fetchProperties({
+            listing_type: 'sale',
+            location: location || undefined,
+            min_price: min_price || undefined,
+            max_price: max_price || undefined
+          });
+          renderPropertyGrid('buyProperties', items);
+        } catch (e) {
+          renderPropertyGrid('buyProperties', []);
+          console.error(e);
+        }
+      })();
     });
   </script>
 </body>

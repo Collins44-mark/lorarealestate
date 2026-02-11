@@ -80,7 +80,6 @@
     </a>
   </div>
 
-  <script src="js/properties.js"></script>
   <script src="js/script.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
@@ -89,7 +88,7 @@
       const idFromHash = (window.location.hash || '').replace(/^#/, '').trim();
       const id = idFromQuery || idFromHash;
       const container = document.getElementById('propertyDetail');
-      const props = (typeof PROPERTIES !== 'undefined' && Array.isArray(PROPERTIES)) ? PROPERTIES : [];
+      // Content is loaded from the backend API (no hardcoded data).
 
       if (!id) {
         container.innerHTML = `
@@ -105,55 +104,6 @@
         `;
         return;
       }
-
-      const property = props.find(p => p.id === parseInt(id, 10));
-
-      if (!property) {
-        container.innerHTML = `
-          <div class="section">
-            <div class="container">
-              <div class="empty-state">
-                <h3>Property not found</h3>
-                <p>This property may no longer be available. Browse our current listings.</p>
-                <a href="buy.html" class="btn btn-primary" style="margin-top: 1rem;">View Properties for Sale</a>
-                <a href="rent.html" class="btn btn-secondary" style="margin-top: 1rem; margin-left: 0.5rem;">View Rentals</a>
-              </div>
-            </div>
-          </div>
-        `;
-        return;
-      }
-
-      const price = property.status === 'sale'
-        ? formatPrice(property.price)
-        : formatPrice(property.rentPrice) + '/month';
-      const badgeClass = property.status === 'sale' ? 'badge-sale' : 'badge-rent';
-      const badgeText = property.status === 'sale' ? 'For Sale' : 'For Rent';
-
-      const whatsappMsg = encodeURIComponent(
-        `Hello, I am interested in this property from Lora Real Estate: ${property.title}. Please share more details.`
-      );
-      const whatsappUrl = 'https://wa.me/255788275367?text=' + whatsappMsg;
-      const callUrl = 'tel:+255788275367';
-
-      const imageGallery = property.images.map((img, i) => `
-        <div class="property-gallery-slide ${i === 0 ? 'active' : ''}" data-index="${i}">
-          <img src="${getImageUrl(img)}" alt="${property.title} - ${getImageLabel(img) || 'Image ' + (i+1)}">
-        </div>
-      `).join('');
-
-      const thumbnails = property.images.length > 1 ? property.images.map((img, i) => `
-        <button type="button" class="property-gallery-thumb ${i === 0 ? 'active' : ''}" data-index="${i}" aria-label="View image ${i + 1}">
-          <img src="${getImageUrl(img)}" alt="">
-        </button>
-      `).join('') : '';
-
-      const allImagesGrid = property.images.map((img, i) => `
-        <div class="property-image-item">
-          <img src="${getImageUrl(img)}" alt="${property.title} - ${getImageLabel(img) || 'Image ' + (i+1)}">
-          ${getImageLabel(img) ? `<span class="property-image-label">${getImageLabel(img)}</span>` : ''}
-        </div>
-      `).join('');
 
       function getVideoHtml(videoUrl) {
         if (!videoUrl) return '';
@@ -177,152 +127,217 @@
         </div>`;
       }
 
-      const videoHtml = getVideoHtml(property.video);
+      (async () => {
+        try {
+          const property = await apiGet(`/api/properties/${encodeURIComponent(id)}/`);
 
-      container.innerHTML = `
-        <div class="property-gallery">
-          <div class="property-gallery-main">
-            ${imageGallery}
-            ${property.images.length > 1 ? `
-              <button type="button" class="gallery-nav gallery-prev" aria-label="Previous image">&lsaquo;</button>
-              <button type="button" class="gallery-nav gallery-next" aria-label="Next image">&rsaquo;</button>
-            ` : ''}
-          </div>
-          ${property.images.length > 1 ? `<div class="property-gallery-thumbs">${thumbnails}</div>` : ''}
-        </div>
-        <div class="property-detail-content">
-          <div class="property-detail-header">
-            <div class="property-detail-title">
-              <span class="property-badge ${badgeClass}">${badgeText}</span>
-              <h1 style="margin-top: 1rem;">${property.title}</h1>
-              <div class="property-price" style="margin: 0.5rem 0;">${price}</div>
-              <div class="property-location-detail">
-                <svg class="icon-pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                  <circle cx="12" cy="10" r="3"></circle>
-                </svg>
-                ${property.location}
+          const priceText = property.listing_type === 'sale'
+            ? formatPrice(property.price)
+            : formatPrice(property.price) + '/month';
+          const badgeClass = property.listing_type === 'sale' ? 'badge-sale' : 'badge-rent';
+          const badgeText = property.listing_type === 'sale' ? 'For Sale' : 'For Rent';
+          const locationText = property.location ? [property.location.name, property.location.city].filter(Boolean).join(', ') : '';
+
+          const contactPhone = property.contact_phone || '+255788275367';
+          const callUrl = `tel:${String(contactPhone).replace(/\\s+/g, '')}`;
+
+          const main = property.main_image ? [{ url: property.main_image, label: 'Main' }] : [];
+          const gallery = Array.isArray(property.gallery_images) ? property.gallery_images : [];
+          const images = [...main, ...gallery].filter(i => i && i.url);
+
+          const imageGallery = images.map((img, i) => `
+            <div class="property-gallery-slide ${i === 0 ? 'active' : ''}" data-index="${i}">
+              <img src="${img.url}" alt="${property.title} - ${img.label || 'Image ' + (i+1)}">
+            </div>
+          `).join('');
+
+          const thumbnails = images.length > 1 ? images.map((img, i) => `
+            <button type="button" class="property-gallery-thumb ${i === 0 ? 'active' : ''}" data-index="${i}" aria-label="View image ${i + 1}">
+              <img src="${img.url}" alt="">
+            </button>
+          `).join('') : '';
+
+          const allImagesGrid = images.map((img, i) => `
+            <div class="property-image-item">
+              <img src="${img.url}" alt="${property.title} - ${img.label || 'Image ' + (i+1)}">
+              ${img.label ? `<span class="property-image-label">${img.label}</span>` : ''}
+            </div>
+          `).join('');
+
+          const videoHtml = getVideoHtml(property.video_url);
+
+          container.innerHTML = `
+            <div class="property-gallery">
+              <div class="property-gallery-main">
+                ${imageGallery || '<div class="empty-state"><p>No images available.</p></div>'}
+                ${images.length > 1 ? `
+                  <button type="button" class="gallery-nav gallery-prev" aria-label="Previous image">&lsaquo;</button>
+                  <button type="button" class="gallery-nav gallery-next" aria-label="Next image">&rsaquo;</button>
+                ` : ''}
+              </div>
+              ${images.length > 1 ? `<div class="property-gallery-thumbs">${thumbnails}</div>` : ''}
+            </div>
+            <div class="property-detail-content">
+              <div class="property-detail-header">
+                <div class="property-detail-title">
+                  <span class="property-badge ${badgeClass}">${badgeText}</span>
+                  <h1 style="margin-top: 1rem;">${property.title}</h1>
+                  <div class="property-price" style="margin: 0.5rem 0;">${priceText}</div>
+                  <div class="property-location-detail">
+                    <svg class="icon-pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                      <circle cx="12" cy="10" r="3"></circle>
+                    </svg>
+                    ${locationText}
+                  </div>
+                </div>
+              </div>
+              <div class="property-features-list">
+                <span><strong>${property.bedrooms ?? '-'}</strong> Bedrooms</span>
+                <span><strong>${property.bathrooms ?? '-'}</strong> Bathrooms</span>
+                <span><strong>${property.area_size ?? '-'} m²</strong> Size</span>
+              </div>
+              ${videoHtml}
+              <div class="property-description">
+                <h2>Full Description</h2>
+                <p>${property.description}</p>
+              </div>
+              <div class="property-details-summary">
+                <h2>Property Details</h2>
+                <div class="details-grid">
+                  <div class="detail-item"><strong>Property ID</strong><span>#${property.id}</span></div>
+                  <div class="detail-item"><strong>Price</strong><span>${priceText}</span></div>
+                  <div class="detail-item"><strong>Location</strong><span>${locationText}</span></div>
+                  <div class="detail-item"><strong>Size</strong><span>${property.area_size ?? '-'} m²</span></div>
+                  <div class="detail-item"><strong>Bedrooms</strong><span>${property.bedrooms ?? '-'}</span></div>
+                  <div class="detail-item"><strong>Bathrooms</strong><span>${property.bathrooms ?? '-'}</span></div>
+                  <div class="detail-item"><strong>Status</strong><span>${badgeText}</span></div>
+                </div>
+              </div>
+              <div class="property-all-images">
+                <h2>All Images</h2>
+                <div class="property-images-grid">${allImagesGrid}</div>
+              </div>
+              <div class="property-book-visit">
+                <a href="${callUrl}" class="btn btn-secondary btn-lg">Call Agent</a>
+                <button type="button" class="btn btn-primary btn-lg" id="bookVisitBtn">Book a Visit</button>
               </div>
             </div>
-          </div>
-          <div class="property-features-list">
-            <span><strong>${property.bedrooms}</strong> Bedrooms</span>
-            <span><strong>${property.bathrooms}</strong> Bathrooms</span>
-            <span><strong>${property.size} m²</strong> Size</span>
-          </div>
-          ${videoHtml}
-          <div class="property-description">
-            <h2>Full Description</h2>
-            <p>${property.description}</p>
-          </div>
-          <div class="property-details-summary">
-            <h2>Property Details</h2>
-            <div class="details-grid">
-              <div class="detail-item"><strong>Property ID</strong><span>#${property.id}</span></div>
-              <div class="detail-item"><strong>Price</strong><span>${price}</span></div>
-              <div class="detail-item"><strong>Location</strong><span>${property.location}</span></div>
-              <div class="detail-item"><strong>Size</strong><span>${property.size} m²</span></div>
-              <div class="detail-item"><strong>Bedrooms</strong><span>${property.bedrooms}</span></div>
-              <div class="detail-item"><strong>Bathrooms</strong><span>${property.bathrooms}</span></div>
-              <div class="detail-item"><strong>Status</strong><span>${badgeText}</span></div>
+          `;
+
+          if (images.length > 1) {
+            const slides = container.querySelectorAll('.property-gallery-slide');
+            const thumbs = container.querySelectorAll('.property-gallery-thumb');
+            const prevBtn = container.querySelector('.gallery-prev');
+            const nextBtn = container.querySelector('.gallery-next');
+            let current = 0;
+
+            function showSlide(i) {
+              current = (i + images.length) % images.length;
+              slides.forEach((s, idx) => s.classList.toggle('active', idx === current));
+              thumbs.forEach((t, idx) => t.classList.toggle('active', idx === current));
+            }
+            prevBtn?.addEventListener('click', () => showSlide(current - 1));
+            nextBtn?.addEventListener('click', () => showSlide(current + 1));
+            thumbs.forEach((t, i) => t.addEventListener('click', () => showSlide(i)));
+          }
+
+          const bookVisitBtn = container.querySelector('#bookVisitBtn');
+          if (bookVisitBtn) {
+            const modalHtml = `
+              <div class="modal-overlay" id="bookVisitModal" aria-hidden="true">
+                <div class="modal-content">
+                  <button type="button" class="modal-close" aria-label="Close">&times;</button>
+                  <h3>Book a Visit</h3>
+                  <p>Fill in your details to request a property viewing. We will confirm by email or phone.</p>
+                  <form id="bookVisitForm">
+                    <input type="hidden" name="propertyId" value="${property.id}">
+                    <div class="form-group">
+                      <label for="visitName">Full Name *</label>
+                      <input type="text" id="visitName" name="full_name" required placeholder="Enter your full name">
+                    </div>
+                    <div class="form-group">
+                      <label for="visitEmail">Email *</label>
+                      <input type="email" id="visitEmail" name="email" required placeholder="you@email.com">
+                    </div>
+                    <div class="form-group">
+                      <label for="visitPhone">Phone</label>
+                      <input type="tel" id="visitPhone" name="phone" placeholder="+255 788 275 367">
+                    </div>
+                    <div class="form-group">
+                      <label for="visitDate">Preferred Date *</label>
+                      <input type="date" id="visitDate" name="preferred_date" required>
+                    </div>
+                    <div class="form-group">
+                      <label for="visitTime">Preferred Time *</label>
+                      <input type="time" id="visitTime" name="preferred_time" required>
+                    </div>
+                    <div class="form-group">
+                      <label for="visitMessage">Message</label>
+                      <textarea id="visitMessage" name="message" placeholder="Any extra details..."></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">Submit Booking Request</button>
+                  </form>
+                </div>
+              </div>
+            `;
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+            const modal = document.getElementById('bookVisitModal');
+            const form = document.getElementById('bookVisitForm');
+
+            bookVisitBtn.addEventListener('click', () => {
+              modal.classList.add('open');
+              modal.setAttribute('aria-hidden', 'false');
+              document.body.style.overflow = 'hidden';
+            });
+
+            const closeModal = () => {
+              modal.classList.remove('open');
+              modal.setAttribute('aria-hidden', 'true');
+              document.body.style.overflow = '';
+            };
+
+            modal.querySelector('.modal-close').addEventListener('click', closeModal);
+            modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+
+            form.addEventListener('submit', async (e) => {
+              e.preventDefault();
+              const payload = {
+                property: Number(form.propertyId.value),
+                full_name: form.querySelector('[name="full_name"]').value.trim(),
+                email: form.querySelector('[name="email"]').value.trim(),
+                phone: form.querySelector('[name="phone"]').value.trim(),
+                preferred_date: form.querySelector('[name="preferred_date"]').value,
+                preferred_time: form.querySelector('[name="preferred_time"]').value,
+                message: form.querySelector('[name="message"]').value.trim()
+              };
+              try {
+                await apiPost('/api/bookings/', payload);
+                alert('Thank you! Your booking request has been submitted.');
+                form.reset();
+                closeModal();
+              } catch (err) {
+                alert('Sorry—could not submit booking. Please try again.');
+                console.error(err);
+              }
+            });
+          }
+        } catch (e) {
+          container.innerHTML = `
+            <div class="section">
+              <div class="container">
+                <div class="empty-state">
+                  <h3>Property not found</h3>
+                  <p>This property may no longer be available. Browse our current listings.</p>
+                  <a href="buy.html" class="btn btn-primary" style="margin-top: 1rem;">View Properties for Sale</a>
+                  <a href="rent.html" class="btn btn-secondary" style="margin-top: 1rem; margin-left: 0.5rem;">View Rentals</a>
+                </div>
+              </div>
             </div>
-          </div>
-          <div class="property-all-images">
-            <h2>All Images</h2>
-            <div class="property-images-grid">${allImagesGrid}</div>
-          </div>
-          <div class="property-book-visit">
-            <a href="${callUrl}" class="btn btn-secondary btn-lg">Call Agent</a>
-            <button type="button" class="btn btn-primary btn-lg" id="bookVisitBtn">Book a Visit</button>
-          </div>
-        </div>
-      `;
-
-      // Image gallery navigation
-      if (property.images.length > 1) {
-        const slides = container.querySelectorAll('.property-gallery-slide');
-        const thumbs = container.querySelectorAll('.property-gallery-thumb');
-        const prevBtn = container.querySelector('.gallery-prev');
-        const nextBtn = container.querySelector('.gallery-next');
-        let current = 0;
-
-        function showSlide(i) {
-          current = (i + property.images.length) % property.images.length;
-          slides.forEach((s, idx) => s.classList.toggle('active', idx === current));
-          thumbs.forEach((t, idx) => t.classList.toggle('active', idx === current));
+          `;
+          console.error(e);
         }
-        prevBtn?.addEventListener('click', () => showSlide(current - 1));
-        nextBtn?.addEventListener('click', () => showSlide(current + 1));
-        thumbs.forEach((t, i) => t.addEventListener('click', () => showSlide(i)));
-      }
-
-      // Book a Visit modal
-      const bookVisitBtn = container.querySelector('#bookVisitBtn');
-      if (bookVisitBtn) {
-        const modalHtml = `
-          <div class="modal-overlay" id="bookVisitModal" aria-hidden="true">
-            <div class="modal-content">
-              <button type="button" class="modal-close" aria-label="Close">&times;</button>
-              <h3>Book a Visit</h3>
-              <p>Fill in your details to schedule a property viewing. We'll send your request via WhatsApp.</p>
-              <form id="bookVisitForm">
-                <input type="hidden" name="propertyId" value="${property.id}">
-                <div class="form-group">
-                  <label for="visitName">Your Name *</label>
-                  <input type="text" id="visitName" name="name" required placeholder="Enter your full name">
-                </div>
-                <div class="form-group">
-                  <label for="visitPhone">Phone Number *</label>
-                  <input type="tel" id="visitPhone" name="phone" required placeholder="+255 788 275 367">
-                </div>
-                <button type="submit" class="btn btn-whatsapp" style="width: 100%;">
-                  <svg viewBox="0 0 24 24" fill="currentColor" class="btn-icon"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-                  Send via WhatsApp
-                </button>
-              </form>
-            </div>
-          </div>
-        `;
-        document.body.insertAdjacentHTML('beforeend', modalHtml);
-        const modal = document.getElementById('bookVisitModal');
-        const form = document.getElementById('bookVisitForm');
-
-        bookVisitBtn.addEventListener('click', () => {
-          modal.classList.add('open');
-          modal.setAttribute('aria-hidden', 'false');
-          document.body.style.overflow = 'hidden';
-        });
-
-        const closeModal = () => {
-          modal.classList.remove('open');
-          modal.setAttribute('aria-hidden', 'true');
-          document.body.style.overflow = '';
-        };
-
-        modal.querySelector('.modal-close').addEventListener('click', closeModal);
-        modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
-
-        form.addEventListener('submit', (e) => {
-          e.preventDefault();
-          const name = form.querySelector('[name="name"]').value.trim();
-          const phone = form.querySelector('[name="phone"]').value.trim();
-          const propId = form.propertyId.value;
-          const msg = encodeURIComponent(
-            `*Book a Visit Request* (Lora Real Estate)\n\n` +
-            `Property ID: #${propId}\n` +
-            `Property: ${property.title}\n` +
-            `Location: ${property.location}\n` +
-            `Price: ${price}\n\n` +
-            `*My Details:*\n` +
-            `Name: ${name}\n` +
-            `Phone: ${phone}\n\n` +
-            `I would like to schedule a visit. Please contact me.`
-          );
-          window.open('https://wa.me/255788275367?text=' + msg, '_blank');
-          form.reset();
-          closeModal();
-        });
-      }
+      })();
     });
   </script>
 </body>

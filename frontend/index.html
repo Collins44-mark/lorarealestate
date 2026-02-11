@@ -170,12 +170,18 @@
     </a>
   </div>
 
-  <script src="js/properties.js"></script>
   <script src="js/script.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      const featured = getFeaturedProperties(4);
-      renderPropertyGrid('featuredProperties', featured);
+      (async () => {
+        try {
+          const featured = await fetchProperties({ featured: true });
+          renderPropertyGrid('featuredProperties', featured.slice(0, 4));
+        } catch (e) {
+          renderPropertyGrid('featuredProperties', []);
+          console.error(e);
+        }
+      })();
     });
   </script>
 </body>
