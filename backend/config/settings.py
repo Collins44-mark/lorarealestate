@@ -166,6 +166,10 @@ if DEBUG and not _cors_origins:
     _cors_origins = ["http://localhost:3000", "http://127.0.0.1:3000"]
 if _cors_origins:
     CORS_ALLOWED_ORIGINS = _cors_origins
+else:
+    # Public read + public inquiry/booking POSTs are allowed from any origin.
+    # Admin-only endpoints are protected by JWT and not by CORS.
+    CORS_ALLOW_ALL_ORIGINS = True
 
 # DRF / JWT
 REST_FRAMEWORK = {
