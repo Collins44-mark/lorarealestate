@@ -20,33 +20,35 @@ A modern, professional real estate website for buying and renting properties.
 
 ## Setup
 
-1. Open `index.html` in a browser, or serve the folder with a local server:
+1. Open `frontend/index.html` in a browser, or serve the `frontend/` folder with a local server:
    ```bash
-   npx serve .
+   npx serve frontend
    ```
 
-2. Update the WhatsApp number in `js/script.js` and in each HTML file (search for `1234567890`).
+2. Update the WhatsApp number in `frontend/js/script.js` and in each HTML file (search for `1234567890`).
 
-3. Add your logo: place `logo.png` in the `/images/` folder. The header and footer will display it; if missing, text "Lora Real Estate" shows instead.
+3. Add your logo: place `logo.png` in `frontend/images/`. The header and footer will display it; if missing, text "Lora Real Estate" shows instead.
 
-4. Replace property images in `js/properties.js` with your own URLs, or add images to `/images/` and reference them.
+4. Replace property images in `frontend/js/properties.js` with your own URLs, or add images to `frontend/images/` and reference them.
 
 ## File Structure
 
 ```
 /
-├── index.html
-├── buy.html
-├── rent.html
-├── property.html
-├── about.html
-├── contact.html
-├── css/
-│   └── style.css
-├── js/
-│   ├── script.js
-│   └── properties.js
-├── images/
+├── frontend/
+│   ├── index.html
+│   ├── buy.html
+│   ├── rent.html
+│   ├── property.html
+│   ├── about.html
+│   ├── contact.html
+│   ├── css/
+│   │   └── style.css
+│   ├── js/
+│   │   ├── script.js
+│   │   └── properties.js
+│   └── images/
+├── backend/
 └── README.md
 ```
 

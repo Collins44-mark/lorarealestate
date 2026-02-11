@@ -1,3 +1,13 @@
 .DS_Store
 **/.DS_Store
 
+# Backend / Python
+backend/.venv/
+**/__pycache__/
+*.pyc
+.env
+.env.*
+.python-version
+*.sqlite3
+
+
