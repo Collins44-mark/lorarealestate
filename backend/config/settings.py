@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -20,12 +21,20 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-v6g2o0%3jij4-bq#=vg632$rz9#llmf7t-8(2dg=@wq)w*4^*i'
+SECRET_KEY = os.environ.get("SECRET_KEY", "dev-insecure-secret-key")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get("DEBUG", "0").lower() in ("1", "true", "yes", "on")
 
-ALLOWED_HOSTS = []
+# Render sets RENDER_EXTERNAL_HOSTNAME (e.g. lorarealestate.onrender.com)
+_render_hostname = os.environ.get("RENDER_EXTERNAL_HOSTNAME", "").strip()
+_allowed_hosts_env = os.environ.get("ALLOWED_HOSTS", "").strip()
+
+ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
+if _render_hostname:
+    ALLOWED_HOSTS.append(_render_hostname)
+if _allowed_hosts_env:
+    ALLOWED_HOSTS.extend([h.strip() for h in _allowed_hosts_env.split(",") if h.strip()])
 
 
 # Application definition
