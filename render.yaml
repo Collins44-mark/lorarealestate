@@ -3,7 +3,7 @@
 #
 # If configuring manually in Render dashboard:
 # - Root Directory: backend
-# - Build Command: pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate --noinput
+# - Build Command: pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate --noinput && python manage.py ensure_admin
 # - Start Command: gunicorn config.wsgi:application
 #
 # Required env vars:

@@ -9,7 +9,7 @@
 | Setting | Value |
 |--------|-------|
 | **Root Directory** | `backend` |
-| **Build Command** | `pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate --noinput` |
+| **Build Command** | `pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate --noinput && python manage.py ensure_admin` |
 | **Start Command** | `gunicorn config.wsgi:application` |
 | **Python Version** | 3.12 (set in Render dashboard or add `runtime.txt` with `python-3.12.0`) |
 
@@ -22,16 +22,12 @@
 | `RENDER_EXTERNAL_HOSTNAME` | Auto | Set automatically by Render for web services |
 | `CLOUDINARY_URL` | No | For image uploads (or use `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET`) |
 
-## Post-Deploy: Create Admin User
+## Admin User (Free Tier – No Shell)
 
-After first deploy with a new database:
+The build command includes `ensure_admin`, so the admin user is created automatically on every deploy. No Shell access needed.
 
-```bash
-# Run in Render shell or locally with DATABASE_URL
-cd backend
-python manage.py ensure_admin
-# Uses default: username lora / password lora@25 (change after first login)
-```
+- **Username:** `lora`
+- **Password:** `lora@25`
 
 ## Admin Login
 
