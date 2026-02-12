@@ -78,6 +78,9 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'config.urls'
 
+# Redirect login_required to admin login (not /accounts/login/ which doesn't exist)
+LOGIN_URL = "/admin/login/"
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
