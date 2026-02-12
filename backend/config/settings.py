@@ -32,7 +32,7 @@ DEBUG = os.environ.get("DEBUG", "0").lower() in ("1", "true", "yes", "on")
 _render_hostname = os.environ.get("RENDER_EXTERNAL_HOSTNAME", "").strip()
 _allowed_hosts_env = os.environ.get("ALLOWED_HOSTS", "").strip()
 
-ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
+ALLOWED_HOSTS = ["localhost", "127.0.0.1", "testserver"]
 if _render_hostname:
     ALLOWED_HOSTS.append(_render_hostname)
 if _allowed_hosts_env:
@@ -43,7 +43,6 @@ if _allowed_hosts_env:
 # Application definition
 
 INSTALLED_APPS = [
-    'django.contrib.admindocs',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -152,7 +151,8 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 STATIC_ROOT = BASE_DIR / "staticfiles"
-STATICFILES_DIRS = [BASE_DIR / "config" / "static"]
+_static_dir = BASE_DIR / "config" / "static"
+STATICFILES_DIRS = [_static_dir] if _static_dir.exists() else []
 
 # Use CompressedStaticFilesStorage (no manifest) to avoid 500s when custom files aren't in manifest
 STATICFILES_STORAGE = "whitenoise.storage.CompressedStaticFilesStorage"

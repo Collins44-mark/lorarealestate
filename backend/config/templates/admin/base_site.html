@@ -1,5 +1,5 @@
 {% extends "admin/base.html" %}
-{% load static %}
+{% load i18n static %}
 
 {% block title %}{{ title }} | Lora Real Estate Admin{% endblock %}
 
@@ -7,6 +7,20 @@
 <h1 id="site-name">
     <a href="{% url 'admin:index' %}">Lora Real Estate Admin</a>
 </h1>
+{% endblock %}
+
+{% block userlinks %}
+{% if site_url %}
+    <a href="{{ site_url }}">{% translate 'View site' %}</a> /
+{% endif %}
+{% if user.has_usable_password %}
+    <a href="{% url 'admin:password_change' %}">{% translate 'Change password' %}</a> /
+{% endif %}
+<form id="logout-form" method="post" action="{% url 'admin:logout' %}">
+    {% csrf_token %}
+    <button type="submit">{% translate 'Log out' %}</button>
+</form>
+{% include "admin/color_theme_toggle.html" %}
 {% endblock %}
 
 {% block extrastyle %}

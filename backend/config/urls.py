@@ -17,6 +17,8 @@ Including another URLconf
 from django.contrib import admin
 from django.http import JsonResponse
 from django.urls import include, path
+
+from config.views import admin_debug
 from rest_framework.routers import DefaultRouter
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
@@ -50,7 +52,7 @@ router.register(r"locations", LocationViewSet, basename="location")
 
 urlpatterns = [
     path("", health),
-    path("admin/doc/", include("django.contrib.admindocs.urls")),
+    path("admin-debug/", admin_debug),
     path("admin/", admin.site.urls),
     path("api/", include(router.urls)),
     path("api/auth/token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
