@@ -29,6 +29,7 @@ from properties.views import PropertyViewSet
 admin.site.site_header = "Lora Real Estate Admin"
 admin.site.site_title = "Lora Real Estate Admin"
 admin.site.index_title = "Dashboard"
+admin.site.index_template = "admin/index_lora.html"
 
 
 def health(request):
