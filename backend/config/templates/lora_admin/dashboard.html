@@ -36,7 +36,7 @@
           </div>
           <div class="property-info">
             <div class="property-title">{{ p.title }}</div>
-            <div class="property-meta">{{ p.currency }} {{ p.price|floatformat:0 }} / month &middot; {{ p.location.name }}, {{ p.location.city }}</div>
+            <div class="property-meta">{{ p.currency }} {{ p.price|floatformat:0 }} / month &middot; {% if p.location %}{{ p.location.name }}, {{ p.location.city }}{% else %}—{% endif %}</div>
             {% if p.featured %}<span class="badge badge-featured">Featured</span>{% endif %}
           </div>
           <a href="{% url 'lora_admin:property_edit' p.pk %}" class="btn btn-edit">Edit</a>
@@ -68,7 +68,7 @@
           </div>
           <div class="property-info">
             <div class="property-title">{{ p.title }}</div>
-            <div class="property-meta">{{ p.currency }} {{ p.price|floatformat:0 }} &middot; {{ p.location.name }}, {{ p.location.city }}</div>
+            <div class="property-meta">{{ p.currency }} {{ p.price|floatformat:0 }} &middot; {% if p.location %}{{ p.location.name }}, {{ p.location.city }}{% else %}—{% endif %}</div>
             {% if p.featured %}<span class="badge badge-featured">Featured</span>{% endif %}
           </div>
           <a href="{% url 'lora_admin:property_edit' p.pk %}" class="btn btn-edit">Edit</a>

@@ -130,7 +130,10 @@ def admin_login(request):
         user = authenticate(request, username=username, password=password)
         if user and user.is_staff:
             login(request, user)
-            next_url = request.POST.get("next") or request.GET.get("next") or reverse("lora_admin:dashboard")
+            next_url = request.POST.get("next") or request.GET.get("next") or ""
+            # Only allow relative URLs to prevent open redirect
+            if not next_url or not next_url.startswith("/") or next_url.startswith("//"):
+                next_url = reverse("lora_admin:dashboard")
             return redirect(next_url)
         error = "Invalid username or password."
     return render(request, "lora_admin/login.html", {"error": error})
