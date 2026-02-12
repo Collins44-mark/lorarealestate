@@ -1,0 +1,138 @@
+{% extends "admin/base.html" %}
+{% load i18n static %}
+
+{% block title %}{{ title }} | Lora Real Estate Admin{% endblock %}
+
+{% block branding %}
+<h1 id="site-name">
+    <a href="{% url 'admin:index' %}">
+        <img src="{% static 'admin/images/logo.png' %}" alt="" class="lora-admin-logo">
+        Lora Real Estate
+    </a>
+</h1>
+{% endblock %}
+
+{% block usertools %}{% endblock %}
+
+{% block nav-sidebar %}
+{% include "admin/nav_sidebar.html" %}
+{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+{% if user.is_authenticated %}<link rel="stylesheet" href="{% static 'admin/css/custom.css' %}">{% endif %}
+<style>
+.skip-to-content-link { display: none !important; }
+/* Lora Real Estate Admin - Website colors (brand-brown #3A1F1B, brand-gold #B59A4A) */
+:root {
+  --lora-brown: #3A1F1B;
+  --lora-brown-light: #4A2A25;
+  --lora-gold: #B59A4A;
+  --lora-gold-light: #C7AF63;
+  --lora-offwhite: #F2F2EE;
+  --lora-charcoal: #4A4A4A;
+}
+#header {
+  background: linear-gradient(135deg, var(--lora-brown) 0%, var(--lora-brown-light) 100%);
+  color: #fff;
+}
+#branding h1 a, #branding h1 a:link, #branding h1 a:visited { color: #fff; }
+#user-tools a:link, #user-tools a:visited { color: rgba(255,255,255,0.9); }
+#user-tools a:hover { color: #fff; }
+.module h2, .module caption, .inline-group h2 {
+  background: var(--lora-offwhite);
+  color: var(--lora-brown);
+}
+.button, input[type=submit], input[type=button], .submit-row input {
+  background: var(--lora-brown);
+}
+.button:hover, input[type=submit]:hover, input[type=button]:hover {
+  background: var(--lora-brown-light);
+}
+.button.default, input[type=submit].default {
+  background: var(--lora-gold);
+  color: var(--lora-brown);
+}
+.button.default:hover, input[type=submit].default:hover {
+  background: var(--lora-gold-light);
+}
+.admin-welcome-card {
+  background: var(--lora-offwhite);
+  border: 1px solid rgba(58,31,27,0.12);
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 24px;
+}
+.admin-welcome-card h2 { margin-top: 0; color: var(--lora-brown); font-size: 1.4em; }
+.admin-welcome-card h3 { color: var(--lora-charcoal); font-size: 1.1em; }
+.admin-welcome-card code {
+  background: rgba(181,154,74,0.16);
+  padding: 2px 6px;
+  border-radius: 6px;
+}
+.admin-steps { margin: 16px 0; padding-left: 24px; }
+.admin-steps li { margin-bottom: 12px; }
+/* Header logo */
+.lora-admin-logo { height: 32px; width: auto; vertical-align: middle; margin-right: 10px; }
+#branding h1 a { display: inline-flex; align-items: center; }
+/* Sidebar - white, modern */
+#nav-sidebar {
+  background: #fff !important;
+  border-right: 1px solid rgba(58,31,27,0.1) !important;
+  box-shadow: 2px 0 12px rgba(0,0,0,0.04);
+}
+.toggle-nav-sidebar.lora-toggle {
+  background: #fff !important;
+  border-right: 1px solid rgba(58,31,27,0.1) !important;
+  width: 48px;
+  flex: 0 0 48px;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+}
+.toggle-nav-sidebar.lora-toggle::before { content: none !important; }
+.toggle-nav-sidebar .hamburger {
+  display: block;
+  width: 20px;
+  height: 2px;
+  background: var(--lora-brown);
+  border-radius: 2px;
+  box-shadow: 0 6px 0 var(--lora-brown), 0 12px 0 var(--lora-brown);
+}
+.lora-sidebar-inner { display: flex; flex-direction: column; min-height: 100%; padding: 1rem 0; }
+.lora-sidebar-nav { flex: 1; }
+.lora-sidebar-nav .nav-item,
+.lora-sidebar-footer .nav-item {
+  display: block;
+  padding: 0.65rem 1.5rem;
+  color: var(--lora-brown);
+  text-decoration: none;
+  font-size: 0.95rem;
+  border-left: 3px solid transparent;
+  background: none;
+  border-right: none;
+  border-top: none;
+  border-bottom: none;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  font-family: inherit;
+}
+.lora-sidebar-nav .nav-item:hover,
+.lora-sidebar-footer .nav-item:hover { background: rgba(181,154,74,0.1); color: var(--lora-brown); }
+.lora-sidebar-nav .nav-item.current { border-left-color: var(--lora-gold); font-weight: 600; background: rgba(181,154,74,0.08); }
+.lora-sidebar-nav .nav-add { color: var(--lora-gold); font-weight: 600; }
+.lora-sidebar-footer {
+  margin-top: auto;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(58,31,27,0.1);
+}
+.lora-sidebar-footer form { margin: 0; }
+.lora-sidebar-footer .nav-logout { color: var(--lora-charcoal); }
+#nav-sidebar #nav-filter { display: none; }
+.lora-welcome { padding: 2rem; max-width: 32rem; }
+.lora-welcome h2 { margin-top: 0; color: var(--lora-brown); font-size: 1.5rem; }
+.lora-welcome p { color: var(--lora-charcoal); line-height: 1.6; }
+.lora-welcome .button { display: inline-block; margin-top: 1rem; padding: 0.6rem 1.25rem; }
+</style>
+{% endblock %}

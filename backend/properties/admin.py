@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib import admin
 from django.utils.html import format_html
+from django.utils.translation import gettext_lazy as _
 
 from .models import Property, PropertyImage
 from .services import upload_property_media
@@ -8,15 +9,18 @@ from .services import upload_property_media
 
 class PropertyImageInline(admin.TabularInline):
     model = PropertyImage
-    extra = 0
+    extra = 1
     fields = ("preview", "url", "sort_order")
     readonly_fields = ("preview",)
+    ordering = ("sort_order", "id")
+    verbose_name = "Gallery image"
+    verbose_name_plural = "Gallery images"
 
     def preview(self, obj: PropertyImage):
         if not obj.url:
             return "-"
         return format_html(
-            '<img src="{}" style="width:60px;height:60px;object-fit:cover;border-radius:8px;" />',
+            '<img src="{}" style="width:72px;height:72px;object-fit:cover;border-radius:8px;border:1px solid rgba(58,31,27,0.12);" />',
             obj.url,
         )
 
@@ -44,39 +48,31 @@ class PropertyAdmin(admin.ModelAdmin):
     form = PropertyAdminForm
     inlines = (PropertyImageInline,)
 
-    list_display = ("thumbnail", "title", "listing_type", "property_type", "price", "currency", "location", "featured", "published", "created_at")
+    list_display = ("thumbnail", "title", "listing_type", "property_type", "price_display", "location", "featured", "published", "created_at")
     list_filter = ("listing_type", "property_type", "featured", "published", "location__city")
+    list_editable = ("featured", "published")
     search_fields = ("title", "location__name", "location__city")
     ordering = ("-created_at",)
+    list_per_page = 20
+    list_display_links = ("title", "thumbnail")
+    actions = ["make_published", "make_unpublished", "make_featured", "make_unfeatured"]
 
     fieldsets = (
-        (None, {"fields": ("title", "description")}),
-        (
-            "Listing",
-            {
-                "fields": ("property_type", "listing_type", "price", "currency", "location"),
-                "description": "Add Locations first under Locations if needed.",
-            },
-        ),
-        ("Details", {"fields": ("bedrooms", "bathrooms", "area_size")}),
-        (
-            "Visibility",
-            {
-                "fields": ("featured", "published"),
-                "description": "Featured: show on homepage. Published: show on site.",
-            },
-        ),
-        ("Contact", {"fields": ("contact_phone", "contact_whatsapp")}),
-        (
-            "Media (Cloudinary)",
-            {
-                "fields": ("main_image", "video_url", "main_image_upload", "gallery_uploads", "video_upload"),
-                "description": "Upload main image and gallery images. Cloudinary env vars required.",
-            },
-        ),
+        ("1. Category", {"fields": ("listing_type", "property_type")}),
+        ("2. Basic", {"fields": ("title", "description")}),
+        ("3. Price & location", {"fields": ("price", "currency", "location")}),
+        ("4. Details", {"fields": ("bedrooms", "bathrooms", "area_size")}),
+        ("5. Images & video", {"fields": ("main_image", "video_url", "main_image_upload", "gallery_uploads", "video_upload")}),
+        ("6. Contact", {"fields": ("contact_phone", "contact_whatsapp")}),
+        ("7. Visibility", {"fields": ("featured", "published")}),
     )
 
     readonly_fields = ("main_image", "video_url")
+
+    def price_display(self, obj: Property):
+        return f"{obj.currency} {obj.price:,.0f}" if obj.price else "-"
+
+    price_display.short_description = "Price"
 
     def thumbnail(self, obj: Property):
         if not obj.main_image:
@@ -85,6 +81,26 @@ class PropertyAdmin(admin.ModelAdmin):
             '<img src="{}" style="width:56px;height:56px;object-fit:cover;border-radius:12px;" />',
             obj.main_image,
         )
+
+    @admin.action(description=_("Publish selected"))
+    def make_published(self, request, queryset):
+        updated = queryset.update(published=True)
+        self.message_user(request, _("%(count)d property(ies) published.") % {"count": updated})
+
+    @admin.action(description=_("Unpublish selected"))
+    def make_unpublished(self, request, queryset):
+        updated = queryset.update(published=False)
+        self.message_user(request, _("%(count)d property(ies) unpublished.") % {"count": updated})
+
+    @admin.action(description=_("Feature selected"))
+    def make_featured(self, request, queryset):
+        updated = queryset.update(featured=True)
+        self.message_user(request, _("%(count)d property(ies) featured.") % {"count": updated})
+
+    @admin.action(description=_("Remove from featured"))
+    def make_unfeatured(self, request, queryset):
+        updated = queryset.update(featured=False)
+        self.message_user(request, _("%(count)d property(ies) removed from featured.") % {"count": updated})
 
     def save_model(self, request, obj: Property, form: PropertyAdminForm, change: bool):
         super().save_model(request, obj, form, change)
@@ -105,6 +121,3 @@ class PropertyAdmin(admin.ModelAdmin):
         )
 
 
-@admin.register(PropertyImage)
-class PropertyImageAdmin(admin.ModelAdmin):
-    list_display = ("id", "property", "sort_order", "url")

@@ -1,0 +1,22 @@
+{% extends "lora_admin/base.html" %}
+
+{% block content %}
+<div class="page-header">
+  <h1>Delete Location</h1>
+</div>
+
+<div class="confirm-delete">
+  {% if has_properties %}
+  <p>Cannot delete <strong>{{ location.name }}, {{ location.city }}</strong> because it has {{ location.properties.count }} property(ies) assigned.</p>
+  <p class="muted">Reassign or delete those properties first.</p>
+  <a href="{% url 'lora_admin:locations' %}" class="btn btn-outline">Back to Locations</a>
+  {% else %}
+  <p>Are you sure you want to delete <strong>{{ location.name }}, {{ location.city }}</strong>?</p>
+  <form method="post" class="form-actions">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Delete</button>
+    <a href="{% url 'lora_admin:locations' %}" class="btn btn-outline">Cancel</a>
+  </form>
+  {% endif %}
+</div>
+{% endblock %}

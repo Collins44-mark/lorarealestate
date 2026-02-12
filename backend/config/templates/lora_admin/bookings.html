@@ -1,0 +1,39 @@
+{% extends "lora_admin/base.html" %}
+
+{% block content %}
+<div class="page-header">
+  <h1>Bookings</h1>
+  <p class="page-subtitle">Viewing requests from the website</p>
+</div>
+
+<div class="table-container">
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Property</th>
+        <th>Date</th>
+        <th>Time</th>
+        <th>Status</th>
+        <th>Created</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for b in bookings %}
+      <tr>
+        <td>{{ b.full_name }}<br><small>{{ b.email }}</small></td>
+        <td>{{ b.property.title }}</td>
+        <td>{{ b.preferred_date }}</td>
+        <td>{{ b.preferred_time }}</td>
+        <td><span class="badge badge-{{ b.status }}">{{ b.status }}</span></td>
+        <td>{{ b.created_at|date:"M d, Y" }}</td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="6" class="empty-cell">No bookings yet</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

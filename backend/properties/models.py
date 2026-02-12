@@ -52,7 +52,7 @@ class Property(models.Model):
 
     @property
     def gallery_urls(self) -> list[str]:
-        return [img.url for img in self.gallery_images.all().order_by("sort_order", "id")]
+        return [img.url for img in self.gallery_images.filter(visible=True).order_by("sort_order", "id")]
 
 
 class PropertyImage(models.Model):
@@ -60,6 +60,7 @@ class PropertyImage(models.Model):
     url = models.URLField(max_length=1000)
     public_id = models.CharField(max_length=255, blank=True)
     sort_order = models.PositiveIntegerField(default=0)
+    visible = models.BooleanField(default=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
 

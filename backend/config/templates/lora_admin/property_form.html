@@ -1,0 +1,355 @@
+{% extends "lora_admin/base.html" %}
+
+{% block content %}
+<div class="page-header">
+  <h1>{% if property %}Edit Property{% else %}Add Property{% endif %}</h1>
+  {% if property %}
+  <a href="{% url 'lora_admin:property_detail' property.pk %}" class="btn btn-outline">Cancel</a>
+  {% else %}
+  <a href="{% url 'lora_admin:dashboard' %}" class="btn btn-outline">Cancel</a>
+  {% endif %}
+</div>
+
+<form method="post" enctype="multipart/form-data" class="property-form">
+  {% csrf_token %}
+  {% if form.non_field_errors %}
+  <div class="form-errors">{{ form.non_field_errors }}</div>
+  {% endif %}
+
+  <section class="form-section">
+    <h3>1. Category</h3>
+    <div class="form-row">
+      <div class="form-group">
+        <label for="id_listing_type">Listing Type</label>
+        {{ form.listing_type }}
+      </div>
+      <div class="form-group">
+        <label for="id_property_type">Property Type</label>
+        {{ form.property_type }}
+      </div>
+    </div>
+  </section>
+
+  <section class="form-section">
+    <h3>2. Basic Info</h3>
+    <div class="form-group">
+      <label for="id_title">Title</label>
+      {{ form.title }}
+      {{ form.title.errors }}
+    </div>
+    <div class="form-group">
+      <label for="id_description">Description</label>
+      {{ form.description }}
+      {{ form.description.errors }}
+    </div>
+  </section>
+
+  <section class="form-section">
+    <h3>3. Price & Location</h3>
+    <div class="form-row">
+      <div class="form-group">
+        <label for="id_price">Price</label>
+        {{ form.price }}
+        {{ form.price.errors }}
+      </div>
+      <div class="form-group">
+        <label for="id_currency">Currency</label>
+        {{ form.currency }}
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="id_location">Location</label>
+      {{ form.location }}
+      {{ form.location.errors }}
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label for="id_contact_phone">Phone Number</label>
+        {{ form.contact_phone }}
+      </div>
+      <div class="form-group">
+        <label for="id_contact_whatsapp">WhatsApp Number</label>
+        {{ form.contact_whatsapp }}
+      </div>
+    </div>
+  </section>
+
+  <section class="form-section">
+    <h3>4. Property Details</h3>
+    <div class="form-row form-row-3">
+      <div class="form-group">
+        <label for="id_bedrooms">Bedrooms</label>
+        {{ form.bedrooms }}
+      </div>
+      <div class="form-group">
+        <label for="id_bathrooms">Bathrooms</label>
+        {{ form.bathrooms }}
+      </div>
+      <div class="form-group">
+        <label for="id_area_size">Area Size (m²)</label>
+        {{ form.area_size }}
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group form-check">
+        <label>{{ form.featured }} Featured</label>
+      </div>
+      <div class="form-group form-check">
+        <label>{{ form.published }} Publish</label>
+      </div>
+    </div>
+  </section>
+
+  <section class="property-images-card">
+    <div class="property-images-header">
+      <h3>5. Property Images</h3>
+      <div class="property-images-header-actions">
+        <label for="id_main_image_upload" class="btn btn-add-image" id="add-first-btn" title="Add image">
+          <input type="file" name="main_image_upload" id="id_main_image_upload" accept="image/*" style="display:none">
+          + Add Image
+        </label>
+        <div class="btn btn-add-image" id="add-more-btn" title="Add image" style="display:none" role="button" tabindex="0">+ Add Image</div>
+      </div>
+    </div>
+    <div class="property-images-table-wrap">
+      <table class="property-images-table" id="property-images-table">
+        <thead>
+          <tr>
+            <th class="col-preview">Preview</th>
+            <th class="col-caption">Caption</th>
+            <th class="col-order">Order</th>
+            <th class="col-actions">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% if property %}
+            {% if property.main_image %}
+            <tr class="image-row" data-type="main" data-id="main">
+              <td><div class="img-thumb"><img src="{{ property.main_image }}" alt=""></div></td>
+              <td class="col-caption-cell"><input type="hidden" name="gallery_visible_main" value="on">—</td>
+              <td><input type="number" name="gallery_order_main" value="0" class="image-order-input" min="0" title="Slider position"></td>
+              <td><div class="image-actions-inline"><button type="button" class="btn btn-delete-img del-btn">Delete</button></div></td>
+            </tr>
+            {% endif %}
+            {% for img in property.gallery_images.all %}
+            <tr class="image-row" data-type="gallery" data-id="{{ img.id }}">
+              <td><div class="img-thumb"><img src="{{ img.url }}" alt=""></div></td>
+              <td class="col-caption-cell"><input type="hidden" name="gallery_visible_{{ img.id }}" value="{% if img.visible %}on{% endif %}">—</td>
+              <td><input type="number" name="gallery_order_{{ img.id }}" value="{{ img.sort_order }}" class="image-order-input" min="0"></td>
+              <td><div class="image-actions-inline"><button type="button" class="btn btn-delete-img del-btn">Delete</button></div></td>
+            </tr>
+            {% endfor %}
+          {% endif %}
+          <tr class="empty-row" id="images-empty-row" {% if property and property.main_image or property and property.gallery_images.all %}style="display:none"{% endif %}>
+            <td colspan="4" class="empty-cell">No images yet. Click &quot;+ Add Image&quot; to add.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <template id="inline-add-row-tpl">
+      <tr class="inline-add-row">
+        <td><div class="img-thumb img-thumb-placeholder"><span class="no-preview">Select file</span></div></td>
+        <td class="col-caption-cell">—</td>
+        <td><input type="number" class="image-order-input inline-order" value="0" min="0"></td>
+        <td>
+          <div class="inline-add-actions">
+            <input type="file" class="inline-file-input" accept="image/*" style="display:none">
+            <button type="button" class="btn btn-choose-file inline-upload-trigger">Choose file</button>
+            <button type="button" class="btn btn-save-sm inline-save">Save</button>
+            <button type="button" class="btn btn-cancel-sm inline-cancel">Cancel</button>
+          </div>
+        </td>
+      </tr>
+    </template>
+  </section>
+
+  <section class="form-section property-video-section">
+    <h3>6. Property Video</h3>
+    <div class="video-upload-card">
+      <label for="id_video_upload" class="form-group">Upload or replace video</label>
+      {{ form.video_upload }}
+      {% if property and property.video_url %}
+      <div class="video-preview-card">
+        <p class="video-label">Current video</p>
+        <video src="{{ property.video_url }}" controls class="preview-video"></video>
+      </div>
+      {% endif %}
+    </div>
+  </section>
+
+  <div class="form-actions">
+    <button type="submit" class="btn btn-primary btn-lg">Save Property</button>
+  </div>
+</form>
+
+<script>
+(function() {
+  var form = document.querySelector('form.property-form');
+  var table = document.getElementById('property-images-table');
+  var tbody = table && table.querySelector('tbody');
+  var emptyRow = document.getElementById('images-empty-row');
+  var addFirstBtn = document.getElementById('add-first-btn');
+  var addMoreBtn = document.getElementById('add-more-btn');
+  var tpl = document.getElementById('inline-add-row-tpl');
+  var mainInput = document.getElementById('id_main_image_upload');
+
+  if (!tbody) return;
+
+  var deleteIds = [];
+  var mainImageDeleted = false;
+
+  function getDisplayRows() {
+    return tbody.querySelectorAll('tr.image-row');
+  }
+
+  function toggleUI() {
+    var rows = getDisplayRows();
+    if (emptyRow) emptyRow.style.display = rows.length ? 'none' : 'table-row';
+    if (addFirstBtn) addFirstBtn.style.display = rows.length ? 'none' : 'inline-flex';
+    if (addMoreBtn) addMoreBtn.style.display = rows.length ? 'inline-flex' : 'none';
+  }
+
+  function addDisplayRowFromMain(src) {
+    var tr = document.createElement('tr');
+    tr.className = 'image-row';
+    tr.dataset.type = 'main';
+    tr.dataset.id = 'main';
+    tr.innerHTML = '<td><div class="img-thumb"><img src="'+src.replace(/"/g,'&quot;')+'" alt=""></div></td>' +
+      '<td class="col-caption-cell"><input type="hidden" name="gallery_visible_main" value="on">—</td>' +
+      '<td><input type="number" name="gallery_order_main" value="0" class="image-order-input" min="0"></td>' +
+      '<td><div class="image-actions-inline"><button type="button" class="btn btn-delete-img del-btn">Delete</button></div></td>';
+    emptyRow.insertAdjacentElement('beforebegin', tr);
+    bindRowActions(tr);
+    toggleUI();
+  }
+
+  function addDisplayRowFromFile(src, fileInput) {
+    var tr = document.createElement('tr');
+    tr.className = 'image-row';
+    tr.dataset.type = 'gallery';
+    tr.dataset.id = 'new-' + Date.now();
+    tr.innerHTML = '<td><div class="img-thumb"><img src="'+src.replace(/"/g,'&quot;')+'" alt=""></div></td>' +
+      '<td class="col-caption-cell">—</td>' +
+      '<td><input type="number" class="image-order-input" min="0" value="0"></td>' +
+      '<td><div class="image-actions-inline"><button type="button" class="btn btn-delete-img del-btn">Delete</button></div></td>';
+    fileInput.name = 'gallery_uploads';
+    fileInput.style.cssText = 'position:absolute;clip:rect(0,0,0,0);width:1px;height:1px;margin:-1px;overflow:hidden;';
+    tr.querySelector('.image-actions-inline').appendChild(fileInput);
+    emptyRow.insertAdjacentElement('beforebegin', tr);
+    bindRowActions(tr);
+    updateOrderNumbers();
+    toggleUI();
+  }
+
+  function bindRowActions(tr) {
+    var delBtn = tr.querySelector('.del-btn');
+    var id = tr.dataset.id;
+    var type = tr.dataset.type;
+    if (delBtn) {
+      delBtn.addEventListener('click', function() {
+        if (type === 'main') mainImageDeleted = true;
+        else if (id && id !== 'main' && !String(id).startsWith('new-')) deleteIds.push(id);
+        tr.remove();
+        toggleUI();
+      });
+    }
+  }
+
+  tbody.querySelectorAll('tr.image-row').forEach(bindRowActions);
+
+  function updateOrderNumbers() {
+    var rows = getDisplayRows();
+    rows.forEach(function(r, i) {
+      var inp = r.querySelector('.image-order-input');
+      if (inp && (!inp.name || inp.name === 'gallery_order_tmp')) inp.value = i;
+    });
+  }
+
+  if (addFirstBtn) addFirstBtn.addEventListener('change', function(e) {
+    if (!e.target.files || !e.target.files.length) return;
+    var r = new FileReader();
+    r.onload = function() { addDisplayRowFromMain(r.result); };
+    r.readAsDataURL(e.target.files[0]);
+  });
+
+  if (addMoreBtn) {
+    addMoreBtn.addEventListener('click', showInlineAddRow);
+    addMoreBtn.addEventListener('keydown', function(e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); showInlineAddRow(); } });
+  }
+
+  function showInlineAddRow() {
+    if (!tpl) return;
+    var existing = tbody.querySelector('.inline-add-row');
+    if (existing) return;
+    var clone = tpl.content.cloneNode(true);
+    var tr = clone.querySelector('tr');
+    var orderInp = tr.querySelector('.inline-order');
+    orderInp.value = getDisplayRows().length;
+    var fileInput = tr.querySelector('.inline-file-input');
+    var uploadBtn = tr.querySelector('.inline-upload-trigger');
+    var saveBtn = tr.querySelector('.inline-save');
+    var cancelBtn = tr.querySelector('.inline-cancel');
+    var thumb = tr.querySelector('.img-thumb-placeholder');
+
+    uploadBtn.addEventListener('click', function() { fileInput.click(); });
+    fileInput.addEventListener('change', function() {
+      if (!this.files || !this.files.length) return;
+      var r = new FileReader();
+      r.onload = function() {
+        thumb.innerHTML = '';
+        var img = document.createElement('img');
+        img.src = r.result;
+        img.alt = '';
+        thumb.appendChild(img);
+      };
+      r.readAsDataURL(this.files[0]);
+    });
+    saveBtn.addEventListener('click', function() {
+      if (!fileInput.files || !fileInput.files.length) { alert('Please select an image first.'); return; }
+      var r = new FileReader();
+      r.onload = function() {
+        addDisplayRowFromFile(r.result, fileInput);
+        tr.remove();
+        toggleUI();
+      };
+      r.readAsDataURL(fileInput.files[0]);
+    });
+    cancelBtn.addEventListener('click', function() { tr.remove(); });
+
+    emptyRow.insertAdjacentElement('beforebegin', tr);
+  }
+
+  form.addEventListener('submit', function() {
+    var rows = Array.from(getDisplayRows());
+    rows.forEach(function(row, i) {
+      var inp = row.querySelector('input[type="file"]');
+      var orderInp = row.querySelector('.image-order-input');
+      if (orderInp && orderInp.name !== 'gallery_order_main' && !String(orderInp.name || '').startsWith('gallery_order_')) {
+        orderInp.name = 'gallery_order_new_' + i;
+      }
+      if (inp) inp.name = i === 0 ? 'main_image_upload' : 'gallery_uploads';
+    });
+    if (rows.length > 0) {
+      var firstFile = rows[0].querySelector('input[type="file"]');
+      if (firstFile && mainInput) mainInput.removeAttribute('name');
+    }
+    if (mainImageDeleted) {
+      var hi = document.createElement('input');
+      hi.type = 'hidden';
+      hi.name = 'main_image_delete';
+      hi.value = '1';
+      form.appendChild(hi);
+    }
+    if (deleteIds.length) {
+      var delInput = document.createElement('input');
+      delInput.type = 'hidden';
+      delInput.name = 'gallery_delete_ids';
+      delInput.value = deleteIds.join(',');
+      form.appendChild(delInput);
+    }
+  });
+
+  toggleUI();
+})();
+</script>
+{% endblock %}

@@ -1,0 +1,93 @@
+{% extends "lora_admin/base.html" %}
+
+{% block content %}
+<div class="page-header">
+  <h1>{{ property.title }}</h1>
+  <div class="page-actions">
+    <a href="{% url 'lora_admin:property_edit' property.pk %}" class="btn btn-gold">Edit</a>
+    <a href="{% url 'lora_admin:property_delete' property.pk %}" class="btn btn-danger">Delete</a>
+  </div>
+</div>
+
+<div class="property-detail">
+  <div class="detail-grid">
+    <section class="detail-section full-width">
+      <h3>Media</h3>
+      <div class="media-slider">
+        <div class="slider-track">
+          {% if property.main_image %}
+          <div class="slider-item"><img src="{{ property.main_image }}" alt="{{ property.title }}"></div>
+          {% endif %}
+          {% for img in property.gallery_images.all %}
+          <div class="slider-item"><img src="{{ img.url }}" alt=""></div>
+          {% endfor %}
+          {% if property.video_url %}
+          <div class="slider-item slider-video">
+            <video src="{{ property.video_url }}" controls></video>
+          </div>
+          {% endif %}
+        </div>
+        <div class="slider-nav">
+          <button type="button" class="slider-prev" aria-label="Previous">&#10094;</button>
+          <span class="slider-counter"><span class="current">1</span> / <span class="total">1</span></span>
+          <button type="button" class="slider-next" aria-label="Next">&#10095;</button>
+        </div>
+      </div>
+      {% if not property.main_image and not property.gallery_images.all and not property.video_url %}
+      <p class="muted">No images or video</p>
+      {% endif %}
+    </section>
+
+    <section class="detail-section">
+      <h3>Details</h3>
+      <dl class="detail-list">
+        <dt>Category</dt>
+        <dd>{{ property.get_listing_type_display }} &middot; {{ property.get_property_type_display }}</dd>
+        <dt>Price</dt>
+        <dd>{{ property.currency }} {{ property.price|floatformat:0 }}{% if property.listing_type == 'rent' %}/month{% endif %}</dd>
+        <dt>Location</dt>
+        <dd>{{ property.location.name }}, {{ property.location.city }}</dd>
+        <dt>Contact</dt>
+        <dd>{{ property.contact_phone|default:"—" }} / {{ property.contact_whatsapp|default:"—" }}</dd>
+        <dt>Details</dt>
+        <dd>{{ property.bedrooms|default:"—" }} beds, {{ property.bathrooms|default:"—" }} baths, {{ property.area_size|default:"—" }} m²</dd>
+        <dt>Status</dt>
+        <dd>
+          {% if property.featured %}<span class="badge badge-featured">Featured</span>{% endif %}
+          {% if property.published %}<span class="badge badge-published">Published</span>{% else %}<span class="badge badge-draft">Draft</span>{% endif %}
+        </dd>
+      </dl>
+    </section>
+
+    <section class="detail-section full-width">
+      <h3>Description</h3>
+      <p class="description">{{ property.description }}</p>
+    </section>
+  </div>
+</div>
+{% endblock %}
+
+{% block extrajs %}
+<script>
+(function() {
+  var track = document.querySelector('.slider-track');
+  if (!track) return;
+  var items = track.querySelectorAll('.slider-item');
+  var total = items.length;
+  if (total === 0) return;
+  var current = 0;
+  var counterCur = document.querySelector('.slider-counter .current');
+  var counterTot = document.querySelector('.slider-counter .total');
+  var prevBtn = document.querySelector('.slider-prev');
+  var nextBtn = document.querySelector('.slider-next');
+  if (counterTot) counterTot.textContent = total;
+  function show(i) {
+    current = (i + total) % total;
+    track.style.transform = 'translateX(-' + (current * 100) + '%)';
+    if (counterCur) counterCur.textContent = current + 1;
+  }
+  if (prevBtn) prevBtn.addEventListener('click', function() { show(current - 1); });
+  if (nextBtn) nextBtn.addEventListener('click', function() { show(current + 1); });
+})();
+</script>
+{% endblock %}

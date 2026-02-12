@@ -1,0 +1,17 @@
+{% extends "lora_admin/base.html" %}
+
+{% block content %}
+<div class="page-header">
+  <h1>Delete Property</h1>
+</div>
+
+<div class="confirm-delete">
+  <p>Are you sure you want to delete <strong>{{ property.title }}</strong>?</p>
+  <p class="muted">This will also remove all images and video from Cloudinary.</p>
+  <form method="post" class="form-actions">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Delete</button>
+    <a href="{% url 'lora_admin:property_detail' property.pk %}" class="btn btn-outline">Cancel</a>
+  </form>
+</div>
+{% endblock %}

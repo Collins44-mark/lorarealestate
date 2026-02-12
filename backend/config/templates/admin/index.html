@@ -1,0 +1,18 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block coltype %}colMS{% endblock %}
+
+{% block bodyclass %}{{ block.super }} dashboard{% endblock %}
+
+{% block content %}
+<div id="content-main">
+  <div class="lora-welcome">
+    <h2>{% translate "Welcome" %}</h2>
+    <p>{% translate "Use the sidebar to manage bookings, locations, and properties." %}</p>
+    <p><a href="{% url 'admin:properties_property_add' %}" class="button">+ {% translate "Add Property" %}</a></p>
+  </div>
+</div>
+{% endblock %}
+
+{% block sidebar %}{% endblock %}

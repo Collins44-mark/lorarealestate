@@ -1,0 +1,55 @@
+{% extends "lora_admin/base.html" %}
+
+{% block content %}
+<div class="page-header">
+  <h1>Properties</h1>
+  <div class="page-actions">
+    <a href="{% url 'lora_admin:property_list' %}" class="btn btn-sm{% if not request.GET.type %} active{% endif %}">All</a>
+    <a href="{% url 'lora_admin:property_list' %}?type=rent" class="btn btn-sm{% if request.GET.type == 'rent' %} active{% endif %}">Rent</a>
+    <a href="{% url 'lora_admin:property_list' %}?type=sale" class="btn btn-sm{% if request.GET.type == 'sale' %} active{% endif %}">Buy</a>
+    <a href="{% url 'lora_admin:property_add' %}" class="btn btn-primary">+ Add Property</a>
+  </div>
+</div>
+
+<div class="table-container">
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>Type</th>
+        <th>Price</th>
+        <th>Location</th>
+        <th>Status</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for p in properties %}
+      <tr>
+        <td>{{ p.title }}</td>
+        <td>{{ p.get_listing_type_display }}</td>
+        <td>{{ p.currency }} {{ p.price|floatformat:0 }}</td>
+        <td>{{ p.location.name }}, {{ p.location.city }}</td>
+        <td>
+          {% if p.featured %}<span class="badge badge-featured">Featured</span>{% endif %}
+          {% if p.published %}<span class="badge badge-published">Published</span>{% else %}<span class="badge badge-draft">Draft</span>{% endif %}
+        </td>
+        <td>
+          <div class="dropdown-wrap">
+            <button type="button" class="btn-dots-minimal" aria-label="Actions">&#8942;</button>
+            <div class="dropdown-menu">
+              <a href="{% url 'lora_admin:property_edit' p.pk %}">Edit</a>
+              <a href="{% url 'lora_admin:property_delete' p.pk %}">Delete</a>
+            </div>
+          </div>
+        </td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="6" class="empty-cell">No properties. <a href="{% url 'lora_admin:property_add' %}">Add one</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

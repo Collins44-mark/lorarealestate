@@ -9,7 +9,15 @@ class InquiryAdmin(admin.ModelAdmin):
     list_filter = ("created_at",)
     search_fields = ("full_name", "email", "phone", "message", "property__title")
     ordering = ("-created_at",)
+    list_per_page = 25
+    date_hierarchy = "created_at"
     readonly_fields = ("property", "full_name", "email", "phone", "message", "created_at")
+    fieldsets = (
+        ("Contact", {"fields": ("full_name", "email", "phone")}),
+        ("Related property", {"fields": ("property",)}),
+        ("Message", {"fields": ("message",)}),
+        ("Received", {"fields": ("created_at",)}),
+    )
 
     def has_add_permission(self, request):
         return False  # Inquiries come from the contact form

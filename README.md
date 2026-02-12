@@ -62,9 +62,13 @@ After first deploy or when the database is fresh, create the admin user:
 cd backend && python manage.py ensure_admin
 ```
 
+**Cloudinary (images/videos):** Set env vars for uploads:
+- `CLOUDINARY_URL` (e.g. `cloudinary://api_key:api_secret@cloud_name`), or
+- `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET`
+
 **Admin workflow:**
 1. **Locations** – Add locations first (e.g. "Oyster Bay", "Dar es Salaam").
-2. **Properties** – Add properties, assign a location, upload images. Use *Featured* for homepage, *Published* to show on site.
+2. **Properties** – Add properties, assign a location, upload images from your device (saved to Cloudinary as URLs). Use *Featured* for homepage, *Published* to show on site.
 3. **Inquiries** – View contact form submissions.
 4. **Bookings** – Manage viewing requests and update status (Pending/Confirmed/Cancelled).
 

@@ -10,8 +10,10 @@ class BookingAdmin(admin.ModelAdmin):
     search_fields = ("full_name", "email", "phone", "property__title")
     ordering = ("-created_at",)
     list_editable = ("status",)
+    list_per_page = 25
+    date_hierarchy = "preferred_date"
     fieldsets = (
-        (None, {"fields": ("property", "full_name", "email", "phone", "message")}),
-        ("Visit", {"fields": ("preferred_date", "preferred_time")}),
+        ("Visitor", {"fields": ("property", "full_name", "email", "phone", "message")}),
+        ("Visit schedule", {"fields": ("preferred_date", "preferred_time")}),
         ("Status", {"fields": ("status",)}),
     )

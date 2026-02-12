@@ -1,0 +1,17 @@
+{% load i18n %}
+<button class="sticky toggle-nav-sidebar lora-toggle" id="toggle-nav-sidebar" aria-label="{% translate 'Toggle navigation' %}"><span class="hamburger"></span></button>
+<nav class="sticky" id="nav-sidebar" aria-label="{% translate 'Sidebar' %}">
+  <div class="lora-sidebar-inner">
+    <div class="lora-sidebar-nav">
+      <a href="{% url 'admin:bookings_booking_changelist' %}" class="nav-item{% if '/bookings/' in request.path %} current{% endif %}">{% translate "Bookings" %}</a>
+      <a href="{% url 'admin:locations_location_changelist' %}" class="nav-item{% if '/locations/' in request.path %} current{% endif %}">{% translate "Locations" %}</a>
+      <a href="{% url 'admin:properties_property_add' %}" class="nav-item nav-add{% if '/property/add/' in request.path %} current{% endif %}">+ {% translate "Add Property" %}</a>
+      <a href="{% url 'admin:properties_property_changelist' %}" class="nav-item{% if '/properties/' in request.path and '/add/' not in request.path %} current{% endif %}">{% translate "Properties" %}</a>
+    </div>
+    <div class="lora-sidebar-footer">
+      {% if site_url %}<a href="{{ site_url }}" class="nav-item">{% translate "View site" %}</a>{% endif %}
+      {% if user.has_usable_password %}<a href="{% url 'admin:password_change' %}" class="nav-item">{% translate "Change password" %}</a>{% endif %}
+      <form method="post" action="{% url 'admin:logout' %}">{% csrf_token %}<button type="submit" class="nav-item nav-logout">{% translate "Log out" %}</button></form>
+    </div>
+  </div>
+</nav>

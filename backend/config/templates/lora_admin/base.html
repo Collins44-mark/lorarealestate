@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}{{ page_title|default:"Lora Real Estate Admin" }}{% endblock %} | Lora Real Estate Admin</title>
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'lora_admin/admin.css' %}">
+  {% block extrahead %}{% endblock %}
+</head>
+<body class="lora-admin">
+  <aside class="lora-sidebar" id="lora-sidebar">
+    <div class="lora-sidebar-header">
+      <a href="{% url 'lora_admin:dashboard' %}" class="lora-logo">Lora Real Estate Admin</a>
+    </div>
+    <nav class="lora-sidebar-nav">
+      <a href="{% url 'lora_admin:dashboard' %}" class="nav-item{% if request.path == '/admin/' or request.path == '/admin' %} active{% endif %}">Dashboard</a>
+      <a href="{% url 'lora_admin:property_list' %}" class="nav-item{% if '/admin/properties/' in request.path and '/add/' not in request.path %} active{% endif %}">Properties</a>
+      <a href="{% url 'lora_admin:property_add' %}" class="nav-item{% if '/admin/properties/add/' in request.path %} active{% endif %}">Add Property</a>
+      <a href="{% url 'lora_admin:locations' %}" class="nav-item{% if '/admin/locations/' in request.path %} active{% endif %}">Locations</a>
+      <a href="{% url 'lora_admin:bookings' %}" class="nav-item{% if '/admin/bookings/' in request.path %} active{% endif %}">Bookings</a>
+      <form method="post" action="{% url 'lora_admin:logout' %}" class="nav-logout-form">
+        {% csrf_token %}
+        <button type="submit" class="nav-item nav-logout">Logout</button>
+      </form>
+    </nav>
+  </aside>
+  <main class="lora-main">
+    {% if messages %}
+    <ul class="lora-messages">
+      {% for message in messages %}
+      <li class="message message-{{ message.tags|default:'info' }}">{{ message }}</li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+    {% block content %}{% endblock %}
+  </main>
+  <button type="button" class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle navigation">
+    <span class="toggle-bar"></span>
+    <span class="toggle-bar"></span>
+    <span class="toggle-bar"></span>
+  </button>
+  <script>
+  (function() {
+    var toggle = document.getElementById('sidebar-toggle');
+    var sidebar = document.getElementById('lora-sidebar');
+    var main = document.querySelector('.lora-main');
+    var open = localStorage.getItem('lora-sidebar-open') !== 'false';
+    function setSidebar(v) {
+      open = v;
+      sidebar.classList.toggle('collapsed', !open);
+      main.classList.toggle('sidebar-collapsed', !open);
+      localStorage.setItem('lora-sidebar-open', open);
+    }
+    setSidebar(open);
+    toggle.addEventListener('click', function() { setSidebar(!open); });
+  })();
+  document.querySelectorAll('.dropdown-wrap').forEach(function(wrap) {
+    var btn = wrap.querySelector('.btn-dots, .btn-dots-trigger, .btn-dots-minimal');
+    if (!btn) return;
+    btn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      document.querySelectorAll('.dropdown-wrap.open').forEach(function(o) {
+        if (o !== wrap) o.classList.remove('open');
+      });
+      wrap.classList.toggle('open');
+    });
+  });
+  document.addEventListener('click', function(e) {
+    if (e.target.closest('.dropdown-menu')) return;
+    document.querySelectorAll('.dropdown-wrap.open').forEach(function(o) { o.classList.remove('open'); });
+  });
+  </script>
+  {% block extrajs %}{% endblock %}
+</body>
+</html>

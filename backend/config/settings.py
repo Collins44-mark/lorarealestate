@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 import os
 from pathlib import Path
 
+import cloudinary
 import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -79,13 +80,13 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'config.urls'
 
-# Redirect login_required to admin login (not /accounts/login/ which doesn't exist)
 LOGIN_URL = "/admin/login/"
+LOGIN_REDIRECT_URL = "/admin/"
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / "config" / "templates"],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -99,6 +100,14 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'config.wsgi.application'
 
+# Session (required for admin login on Render/HTTPS)
+SESSION_ENGINE = "django.contrib.sessions.backends.db"
+SESSION_SAVE_EVERY_REQUEST = True
+SESSION_COOKIE_AGE = 1209600  # 2 weeks
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SAMESITE = "Lax"
+if not DEBUG:
+    SESSION_COOKIE_SECURE = True
 
 # Database (Render Postgres via DATABASE_URL)
 DATABASE_URL = os.environ.get("DATABASE_URL", "").strip()
@@ -155,7 +164,7 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 STATIC_ROOT = BASE_DIR / "staticfiles"
-STATICFILES_DIRS = []
+STATICFILES_DIRS = [BASE_DIR / "config" / "static"]
 
 # Use CompressedStaticFilesStorage (no manifest) to avoid 500s when custom files aren't in manifest
 STATICFILES_STORAGE = "whitenoise.storage.CompressedStaticFilesStorage"
@@ -177,6 +186,17 @@ else:
     # Public read + public inquiry/booking POSTs are allowed from any origin.
     # Admin-only endpoints are protected by JWT and not by CORS.
     CORS_ALLOW_ALL_ORIGINS = True# DRF / JWT
+# Cloudinary (images/videos → URLs)
+_CLOUDINARY_URL = os.environ.get("CLOUDINARY_URL", "").strip()
+if _CLOUDINARY_URL:
+    cloudinary.config()
+else:
+    _cn = os.environ.get("CLOUDINARY_CLOUD_NAME", "").strip()
+    _key = os.environ.get("CLOUDINARY_API_KEY", "").strip()
+    _secret = os.environ.get("CLOUDINARY_API_SECRET", "").strip()
+    if _cn and _key and _secret:
+        cloudinary.config(cloud_name=_cn, api_key=_key, api_secret=_secret, secure=True)
+
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework_simplejwt.authentication.JWTAuthentication",

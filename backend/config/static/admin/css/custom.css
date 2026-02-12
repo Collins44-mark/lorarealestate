@@ -1,85 +1,185 @@
-/* Lora Real Estate Admin - Custom styling */
+/* Lora Real Estate Admin - Modern UI/UX */
 
-#header {
-    background: linear-gradient(135deg, #1a365d 0%, #2c5282 100%);
-    color: #fff;
+:root {
+  --lora-brown: #3A1F1B;
+  --lora-brown-light: #4A2A25;
+  --lora-gold: #B59A4A;
+  --lora-gold-light: #C7AF63;
+  --lora-offwhite: #F2F2EE;
+  --lora-charcoal: #4A4A4A;
+  --lora-border: rgba(58, 31, 27, 0.12);
+  --lora-shadow: 0 2px 12px rgba(58, 31, 27, 0.08);
 }
 
-#branding h1 a,
-#branding h1 a:link,
-#branding h1 a:visited {
-    color: #fff;
+/* Changelist / list views */
+#changelist {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: var(--lora-shadow);
+  border: 1px solid var(--lora-border);
+  overflow: hidden;
 }
 
-#user-tools a:link,
-#user-tools a:visited {
-    color: #e2e8f0;
+#changelist .results {
+  margin: 0;
 }
 
-#user-tools a:hover {
-    color: #fff;
+#changelist table thead th {
+  background: var(--lora-offwhite);
+  color: var(--lora-brown);
+  font-weight: 600;
+  border-bottom: 2px solid var(--lora-border);
+  padding: 0.75rem 1rem;
 }
 
-.admin-welcome-card {
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
-    border-radius: 8px;
-    padding: 24px;
-    margin-bottom: 24px;
+#changelist table tbody tr:hover {
+  background: rgba(181, 154, 74, 0.06);
 }
 
-.admin-welcome-card h2 {
-    margin-top: 0;
-    color: #1a365d;
-    font-size: 1.4em;
+#changelist .actions {
+  background: var(--lora-offwhite);
+  padding: 1rem 1.25rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
 }
 
-.admin-welcome-card h3 {
-    color: #2d3748;
-    font-size: 1.1em;
+/* Form / add/edit views */
+.change-form .module {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: var(--lora-shadow);
+  border: 1px solid var(--lora-border);
+  margin-bottom: 1.5rem;
+  overflow: hidden;
 }
 
-.admin-welcome-card code {
-    background: #edf2f7;
-    padding: 2px 6px;
-    border-radius: 4px;
-}
-
-.admin-steps {
-    margin: 16px 0;
-    padding-left: 24px;
-}
-
-.admin-steps li {
-    margin-bottom: 12px;
-}
-
-.module h2,
-.module caption,
+.change-form .module h2,
+.change-form .module caption,
 .inline-group h2 {
-    background: #e2e8f0;
-    color: #1a365d;
+  background: linear-gradient(135deg, var(--lora-brown) 0%, var(--lora-brown-light) 100%);
+  color: #fff !important;
+  padding: 0.85rem 1.25rem;
+  margin: 0;
+  font-size: 1rem;
+  border: none;
 }
 
-.button,
-input[type=submit],
-input[type=button],
-.submit-row input {
-    background: #2c5282;
+.change-form .module h2 a,
+.change-form .module caption a {
+  color: #fff !important;
 }
 
-.button:hover,
-input[type=submit]:hover,
-input[type=button]:hover {
-    background: #1a365d;
+.change-form .form-row {
+  padding: 0.6rem 1.25rem;
+  border-bottom: 1px solid var(--lora-border);
 }
 
-.button.default,
-input[type=submit].default {
-    background: #276749;
+.change-form .form-row:last-child {
+  border-bottom: none;
 }
 
-.button.default:hover,
-input[type=submit].default:hover {
-    background: #22543d;
+/* Inline related (e.g. property images) */
+.inline-group {
+  margin-bottom: 1.5rem;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: var(--lora-shadow);
+  border: 1px solid var(--lora-border);
+}
+
+.inline-group .tabular td {
+  padding: 0.5rem 0.75rem;
+}
+
+.inline-group .tabular input[type="text"],
+.inline-group .tabular input[type="number"] {
+  padding: 0.4rem 0.6rem;
+  border-radius: 6px;
+  border: 1px solid var(--lora-border);
+}
+
+/* Submit row */
+.submit-row {
+  padding: 1rem 1.25rem !important;
+  background: var(--lora-offwhite);
+  border-radius: 0 0 12px 12px;
+  border-top: 1px solid var(--lora-border);
+}
+
+.submit-row input,
+.submit-row a.button {
+  padding: 0.5rem 1.25rem;
+  border-radius: 8px;
+  font-weight: 600;
+}
+
+/* Delete link */
+.deletelink {
+  color: #b91c1c !important;
+}
+
+.deletelink:hover {
+  color: #991b1b !important;
+}
+
+/* Pagination */
+.pagination a,
+.pagination span {
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  margin: 0 0.15rem;
+}
+
+/* Filters sidebar */
+#changelist-filter {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: var(--lora-shadow);
+  border: 1px solid var(--lora-border);
+}
+
+#changelist-filter h2 {
+  background: var(--lora-offwhite);
+  color: var(--lora-brown);
+  padding: 0.75rem 1rem;
+  font-size: 0.95rem;
+}
+
+#changelist-filter h3 {
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+}
+
+#changelist-filter li {
+  padding: 0.35rem 1rem;
+}
+
+#changelist-filter li.selected a {
+  color: var(--lora-gold);
+  font-weight: 600;
+}
+
+/* Messages */
+.messagelist li.success {
+  background: rgba(34, 197, 94, 0.15);
+  border-left-color: #22c55e;
+}
+
+.messagelist li.warning {
+  background: rgba(245, 158, 11, 0.15);
+  border-left-color: #f59e0b;
+}
+
+/* Breadcrumbs */
+.breadcrumbs {
+  padding: 0.75rem 0;
+  font-size: 0.9rem;
+}
+
+.breadcrumbs a {
+  color: var(--lora-gold);
+}
+
+.breadcrumbs a:hover {
+  color: var(--lora-brown);
 }

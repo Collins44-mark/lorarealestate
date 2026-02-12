@@ -43,7 +43,11 @@ class PropertyDetailSerializer(serializers.ModelSerializer):
     location_id = serializers.PrimaryKeyRelatedField(
         source="location", queryset=Location.objects.all(), write_only=True
     )
-    gallery_images = PropertyImageSerializer(many=True, read_only=True)
+    gallery_images = serializers.SerializerMethodField()
+
+    def get_gallery_images(self, obj):
+        imgs = obj.gallery_images.filter(visible=True).order_by("sort_order", "id")
+        return PropertyImageSerializer(imgs, many=True).data
 
     class Meta:
         model = Property

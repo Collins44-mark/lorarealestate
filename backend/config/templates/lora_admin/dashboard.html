@@ -1,0 +1,84 @@
+{% extends "lora_admin/base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="page-header">
+  <h1>Dashboard</h1>
+  <a href="{% url 'lora_admin:property_add' %}" class="btn btn-primary">+ Add Property</a>
+</div>
+
+<section class="admin-model-section admin-section-properties">
+  <h2 class="admin-section-title">Properties</h2>
+  <p class="admin-section-desc">Manage property listings for sale and rent. Add new properties, edit existing ones, upload images and videos.</p>
+  <div class="admin-section-actions">
+    <a href="{% url 'lora_admin:property_add' %}" class="btn btn-primary btn-lg">+ Add Property</a>
+    <a href="{% url 'lora_admin:property_list' %}" class="btn btn-outline">View all</a>
+  </div>
+</section>
+
+<div class="dashboard-grid">
+  <section class="dashboard-card">
+    <div class="card-header">
+      <h2>Rental Properties</h2>
+      <a href="{% url 'lora_admin:property_list' %}?type=rent" class="btn btn-sm">View all</a>
+    </div>
+    <div class="card-body">
+      {% if rental_properties %}
+      <ul class="property-list">
+        {% for p in rental_properties %}
+        <li class="property-item">
+          <div class="property-thumb">
+            {% if p.main_image %}
+            <img src="{{ p.main_image }}" alt="">
+            {% else %}
+            <span class="no-image">No image</span>
+            {% endif %}
+          </div>
+          <div class="property-info">
+            <div class="property-title">{{ p.title }}</div>
+            <div class="property-meta">{{ p.currency }} {{ p.price|floatformat:0 }} / month &middot; {{ p.location.name }}, {{ p.location.city }}</div>
+            {% if p.featured %}<span class="badge badge-featured">Featured</span>{% endif %}
+          </div>
+          <a href="{% url 'lora_admin:property_edit' p.pk %}" class="btn btn-edit">Edit</a>
+        </li>
+        {% endfor %}
+      </ul>
+      {% else %}
+      <p class="empty-state">No rental properties yet. <a href="{% url 'lora_admin:property_add' %}">Add one</a></p>
+      {% endif %}
+    </div>
+  </section>
+
+  <section class="dashboard-card">
+    <div class="card-header">
+      <h2>Buy Properties</h2>
+      <a href="{% url 'lora_admin:property_list' %}?type=sale" class="btn btn-sm">View all</a>
+    </div>
+    <div class="card-body">
+      {% if buy_properties %}
+      <ul class="property-list">
+        {% for p in buy_properties %}
+        <li class="property-item">
+          <div class="property-thumb">
+            {% if p.main_image %}
+            <img src="{{ p.main_image }}" alt="">
+            {% else %}
+            <span class="no-image">No image</span>
+            {% endif %}
+          </div>
+          <div class="property-info">
+            <div class="property-title">{{ p.title }}</div>
+            <div class="property-meta">{{ p.currency }} {{ p.price|floatformat:0 }} &middot; {{ p.location.name }}, {{ p.location.city }}</div>
+            {% if p.featured %}<span class="badge badge-featured">Featured</span>{% endif %}
+          </div>
+          <a href="{% url 'lora_admin:property_edit' p.pk %}" class="btn btn-edit">Edit</a>
+        </li>
+        {% endfor %}
+      </ul>
+      {% else %}
+      <p class="empty-state">No properties for sale yet. <a href="{% url 'lora_admin:property_add' %}">Add one</a></p>
+      {% endif %}
+    </div>
+  </section>
+</div>
+{% endblock %}

@@ -11,3 +11,4 @@ backend/.venv/
 *.sqlite3
 
 
+backend/staticfiles/
