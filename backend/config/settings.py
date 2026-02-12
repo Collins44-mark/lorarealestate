@@ -33,7 +33,7 @@ DEBUG = os.environ.get("DEBUG", "0").lower() in ("1", "true", "yes", "on")
 _render_hostname = os.environ.get("RENDER_EXTERNAL_HOSTNAME", "").strip()
 _allowed_hosts_env = os.environ.get("ALLOWED_HOSTS", "").strip()
 
-ALLOWED_HOSTS = ["localhost", "127.0.0.1", "testserver"]
+ALLOWED_HOSTS = ["localhost", "127.0.0.1", "testserver", ".onrender.com"]
 if _render_hostname:
     ALLOWED_HOSTS.append(_render_hostname)
 if _allowed_hosts_env:
@@ -162,11 +162,11 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_DIRS = [BASE_DIR / "config" / "static"]
 
-# Use CompressedStaticFilesStorage (no manifest) to avoid 500s when custom files aren't in manifest
+# WhiteNoise serves static files; avoid manifest to prevent 500s when files change
 STATICFILES_STORAGE = "whitenoise.storage.CompressedStaticFilesStorage"
 
 # Security / proxy (Render)
@@ -186,16 +186,40 @@ else:
     # Public read + public inquiry/booking POSTs are allowed from any origin.
     # Admin-only endpoints are protected by JWT and not by CORS.
     CORS_ALLOW_ALL_ORIGINS = True# DRF / JWT
-# Cloudinary (images/videos → URLs)
-_CLOUDINARY_URL = os.environ.get("CLOUDINARY_URL", "").strip()
-if _CLOUDINARY_URL:
-    cloudinary.config()
-else:
-    _cn = os.environ.get("CLOUDINARY_CLOUD_NAME", "").strip()
-    _key = os.environ.get("CLOUDINARY_API_KEY", "").strip()
-    _secret = os.environ.get("CLOUDINARY_API_SECRET", "").strip()
-    if _cn and _key and _secret:
-        cloudinary.config(cloud_name=_cn, api_key=_key, api_secret=_secret, secure=True)
+# Cloudinary (images/videos → URLs) – optional; admin uploads fail gracefully if not set
+try:
+    _CLOUDINARY_URL = os.environ.get("CLOUDINARY_URL", "").strip()
+    if _CLOUDINARY_URL:
+        cloudinary.config()
+    else:
+        _cn = os.environ.get("CLOUDINARY_CLOUD_NAME", "").strip()
+        _key = os.environ.get("CLOUDINARY_API_KEY", "").strip()
+        _secret = os.environ.get("CLOUDINARY_API_SECRET", "").strip()
+        if _cn and _key and _secret:
+            cloudinary.config(cloud_name=_cn, api_key=_key, api_secret=_secret, secure=True)
+except Exception:
+    pass
+
+# Logging (helps debug 500 on Render)
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+        },
+    },
+    "root": {
+        "handlers": ["console"],
+        "level": "WARNING",
+    },
+    "loggers": {
+        "django": {
+            "handlers": ["console"],
+            "level": os.environ.get("DJANGO_LOG_LEVEL", "INFO"),
+        },
+    },
+}
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (

@@ -6,29 +6,137 @@
   <title>Login | Lora Real Estate Admin</title>
   {% load static %}
   <link rel="stylesheet" href="{% static 'lora_admin/admin.css' %}">
+  <style>
+    /* Critical inline styles - login works even if external CSS fails */
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      font-size: 16px;
+      line-height: 1.5;
+      color: #2d2520;
+      background: linear-gradient(135deg, #1e1814 0%, #2d2520 50%, #3b2a1a 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+    .login-wrapper {
+      width: 100%;
+      max-width: 420px;
+      background: #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35);
+      padding: 2.5rem;
+      border: 1px solid rgba(229, 231, 235, 0.5);
+    }
+    .login-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    .login-header h1 {
+      margin: 0 0 0.5rem;
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: #3b2a1a;
+      letter-spacing: -0.02em;
+    }
+    .login-header p {
+      margin: 0;
+      font-size: 0.95rem;
+      color: #6b5d52;
+    }
+    .login-brand {
+      display: inline-block;
+      color: #b59a4a;
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+    .login-error {
+      background: #fef2f2;
+      color: #b91c1c;
+      padding: 0.75rem 1rem;
+      border-radius: 10px;
+      margin-bottom: 1.25rem;
+      font-size: 0.9rem;
+      border: 1px solid #fecaca;
+    }
+    .login-form label {
+      display: block;
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: #374151;
+      margin-bottom: 0.5rem;
+    }
+    .login-form input[type="text"],
+    .login-form input[type="password"] {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      font-size: 1rem;
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      margin-bottom: 1.25rem;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .login-form input:focus {
+      outline: none;
+      border-color: #b59a4a;
+      box-shadow: 0 0 0 3px rgba(181, 154, 74, 0.2);
+    }
+    .login-form button[type="submit"] {
+      width: 100%;
+      padding: 0.875rem 1.5rem;
+      font-size: 1rem;
+      font-weight: 600;
+      background: linear-gradient(135deg, #5c4033 0%, #4a3329 100%);
+      color: #ffffff;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: transform 0.05s, box-shadow 0.2s;
+    }
+    .login-form button[type="submit"]:hover {
+      box-shadow: 0 4px 14px rgba(92, 64, 51, 0.4);
+    }
+    .login-form button[type="submit"]:active {
+      transform: scale(0.99);
+    }
+    .login-footer {
+      text-align: center;
+      margin-top: 1.5rem;
+      font-size: 0.85rem;
+      color: #9ca3af;
+    }
+  </style>
 </head>
 <body class="lora-admin lora-login-page">
-  <div class="login-container">
-    <div class="login-card">
-      <h1 class="login-logo">Lora Real Estate Admin</h1>
-      <p class="login-subtitle">Sign in to manage your listings</p>
-      {% if error %}
-      <div class="login-error">{{ error }}</div>
-      {% endif %}
-      <form method="post" action="{% url 'lora_admin:login' %}" class="login-form">
-        {% csrf_token %}
-        <input type="hidden" name="next" value="{{ request.GET.next }}">
-        <div class="form-group">
-          <label for="username">Username</label>
-          <input type="text" id="username" name="username" class="form-input" required autofocus>
-        </div>
-        <div class="form-group">
-          <label for="password">Password</label>
-          <input type="password" id="password" name="password" class="form-input" required>
-        </div>
-        <button type="submit" class="btn btn-primary btn-block">Sign In</button>
-      </form>
+  <div class="login-wrapper">
+    <div class="login-header">
+      <span class="login-brand">Lora Real Estate</span>
+      <h1>Admin Login</h1>
+      <p>Sign in to manage your property listings</p>
     </div>
+
+    {% if error %}
+    <div class="login-error">{{ error }}</div>
+    {% endif %}
+
+    <form method="post" action="{% url 'lora_admin:login' %}" class="login-form">
+      {% csrf_token %}
+      <input type="hidden" name="next" value="{{ request.GET.next|default:'' }}">
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input type="text" id="username" name="username" class="form-input" placeholder="Enter your username" required autofocus autocomplete="username">
+      </div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" class="form-input" placeholder="Enter your password" required autocomplete="current-password">
+      </div>
+      <button type="submit" class="btn btn-primary btn-block">Sign In</button>
+    </form>
+
+    <p class="login-footer">Secure admin access · Lora Real Estate</p>
   </div>
 </body>
 </html>

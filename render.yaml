@@ -1,0 +1,15 @@
+# Render deployment config for Lora Real Estate
+# Deploy: Connect repo to Render, or use "New" → "Blueprint" and point to this file
+#
+# If configuring manually in Render dashboard:
+# - Root Directory: backend
+# - Build Command: pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate --noinput
+# - Start Command: gunicorn config.wsgi:application
+#
+# Required env vars:
+# - SECRET_KEY (generate a random string)
+# - DATABASE_URL (from Render Postgres, or your own)
+# - RENDER_EXTERNAL_HOSTNAME (auto-set by Render for web services)
+#
+# Optional (for image uploads):
+# - CLOUDINARY_URL or CLOUDINARY_CLOUD_NAME + CLOUDINARY_API_KEY + CLOUDINARY_API_SECRET
