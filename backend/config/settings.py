@@ -26,7 +26,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get("SECRET_KEY", "dev-insecure-secret-key")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get("DEBUG", "0").lower() in ("1", "true", "yes", "on")
+# Set DEBUG=1 or SHOW_500_ERROR=1 to see full traceback (remove after fixing)
+DEBUG = os.environ.get("DEBUG", "0").lower() in ("1", "true", "yes", "on") or os.environ.get("SHOW_500_ERROR", "0") == "1"
 
 # Render sets RENDER_EXTERNAL_HOSTNAME (e.g. lorarealestate.onrender.com)
 _render_hostname = os.environ.get("RENDER_EXTERNAL_HOSTNAME", "").strip()
