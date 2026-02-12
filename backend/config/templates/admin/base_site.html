@@ -11,5 +11,55 @@
 
 {% block extrastyle %}
 {{ block.super }}
-<link rel="stylesheet" type="text/css" href="{% static 'admin/css/custom.css' %}">
+<style>
+/* Lora Real Estate Admin - Website colors (brand-brown #3A1F1B, brand-gold #B59A4A) */
+:root {
+  --lora-brown: #3A1F1B;
+  --lora-brown-light: #4A2A25;
+  --lora-gold: #B59A4A;
+  --lora-gold-light: #C7AF63;
+  --lora-offwhite: #F2F2EE;
+  --lora-charcoal: #4A4A4A;
+}
+#header {
+  background: linear-gradient(135deg, var(--lora-brown) 0%, var(--lora-brown-light) 100%);
+  color: #fff;
+}
+#branding h1 a, #branding h1 a:link, #branding h1 a:visited { color: #fff; }
+#user-tools a:link, #user-tools a:visited { color: rgba(255,255,255,0.9); }
+#user-tools a:hover { color: #fff; }
+.module h2, .module caption, .inline-group h2 {
+  background: var(--lora-offwhite);
+  color: var(--lora-brown);
+}
+.button, input[type=submit], input[type=button], .submit-row input {
+  background: var(--lora-brown);
+}
+.button:hover, input[type=submit]:hover, input[type=button]:hover {
+  background: var(--lora-brown-light);
+}
+.button.default, input[type=submit].default {
+  background: var(--lora-gold);
+  color: var(--lora-brown);
+}
+.button.default:hover, input[type=submit].default:hover {
+  background: var(--lora-gold-light);
+}
+.admin-welcome-card {
+  background: var(--lora-offwhite);
+  border: 1px solid rgba(58,31,27,0.12);
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 24px;
+}
+.admin-welcome-card h2 { margin-top: 0; color: var(--lora-brown); font-size: 1.4em; }
+.admin-welcome-card h3 { color: var(--lora-charcoal); font-size: 1.1em; }
+.admin-welcome-card code {
+  background: rgba(181,154,74,0.16);
+  padding: 2px 6px;
+  border-radius: 6px;
+}
+.admin-steps { margin: 16px 0; padding-left: 24px; }
+.admin-steps li { margin-bottom: 12px; }
+</style>
 {% endblock %}

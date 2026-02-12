@@ -56,12 +56,12 @@ INSTALLED_APPS = [
     'corsheaders',
     'django_filters',
 
-    # Local apps
+    # Local apps (order = admin sidebar: Locations → Properties → Bookings → Inquiries)
     'accounts',
     'locations',
     'properties',
-    'inquiries',
     'bookings',
+    'inquiries',
 ]
 
 MIDDLEWARE = [
@@ -153,13 +153,15 @@ STATIC_URL = 'static/'
 STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_DIRS = [BASE_DIR / "config" / "static"]
 
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+# Use CompressedStaticFilesStorage (no manifest) to avoid 500s when custom files aren't in manifest
+STATICFILES_STORAGE = "whitenoise.storage.CompressedStaticFilesStorage"
 
 # Security / proxy (Render)
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
-CSRF_TRUSTED_ORIGINS = [
-    *(o.strip() for o in os.environ.get("CSRF_TRUSTED_ORIGINS", "").split(",") if o.strip())
-]
+_csrf_origins = [o.strip() for o in os.environ.get("CSRF_TRUSTED_ORIGINS", "").split(",") if o.strip()]
+if _render_hostname and not any(_render_hostname in o for o in _csrf_origins):
+    _csrf_origins.append(f"https://{_render_hostname}")
+CSRF_TRUSTED_ORIGINS = _csrf_origins
 
 # CORS (Vercel frontend)
 _cors_origins = [o.strip() for o in os.environ.get("CORS_ALLOWED_ORIGINS", "").split(",") if o.strip()]

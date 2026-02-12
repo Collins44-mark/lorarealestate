@@ -1,0 +1,261 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block title %}{% if form.errors %}{% translate "Error:" %} {% endif %}{{ block.super }}{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<style>
+/* Lora Real Estate - Modern Admin Login */
+body.login {
+  background: linear-gradient(135deg, #F2F2EE 0%, #EFEFE8 100%);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.3s ease;
+}
+body.login.dark-mode {
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+}
+#header { display: none; }
+#branding { display: none; }
+.login #container {
+  width: 100%;
+  max-width: 420px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+  position: relative;
+}
+.login .theme-toggle {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  width: 44px;
+  height: 44px;
+  border: none;
+  background: rgba(255,255,255,0.9);
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 1.4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+  transition: background 0.2s, transform 0.2s;
+  z-index: 100;
+}
+.login .theme-toggle:hover {
+  transform: scale(1.08);
+}
+body.login.dark-mode .theme-toggle {
+  background: rgba(58,31,27,0.9);
+}
+.login #content { padding: 0; }
+.login #content-main {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(58,31,27,0.12);
+  padding: 2.5rem;
+  border: 1px solid rgba(58,31,27,0.08);
+  transition: background 0.3s, box-shadow 0.3s;
+}
+body.login.dark-mode #content-main {
+  background: #2d2d2d;
+  border-color: rgba(255,255,255,0.1);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+}
+.login .form-row { margin-bottom: 1.25rem; }
+.login .form-row label {
+  display: block;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #3A1F1B;
+  margin-bottom: 0.5rem;
+}
+body.login.dark-mode .form-row label { color: #e2e8f0; }
+.login .form-row input[type="text"],
+.login .form-row input[type="password"] {
+  width: 100%;
+  padding: 0.85rem 1rem;
+  font-size: 1rem;
+  border: 1px solid rgba(58,31,27,0.2);
+  border-radius: 8px;
+  background: #F2F2EE;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+body.login.dark-mode .form-row input {
+  background: #1a1a1a;
+  border-color: rgba(255,255,255,0.2);
+  color: #e2e8f0;
+}
+.login .form-row input:focus {
+  outline: none;
+  border-color: #B59A4A;
+  box-shadow: 0 0 0 3px rgba(181,154,74,0.2);
+}
+.login .password-wrap {
+  position: relative;
+}
+.login .password-wrap input {
+  padding-right: 2.75rem;
+}
+.login .pw-toggle {
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 36px;
+  height: 36px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+}
+.login .pw-toggle:hover { opacity: 1; }
+.login .submit-row { margin: 1.5rem 0 0; padding: 0; }
+.login .submit-row input {
+  width: 100%;
+  padding: 0.9rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  background: #3A1F1B;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+}
+.login .submit-row input:hover {
+  background: #4A2A25;
+  transform: translateY(-2px);
+}
+.login .errornote {
+  background: rgba(185,28,28,0.1);
+  border: 1px solid rgba(185,28,28,0.3);
+  color: #991b1b;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+}
+.login-badge { text-align: center; margin-bottom: 2rem; }
+.login-badge h1 { font-size: 1.5rem; color: #3A1F1B; margin: 0; }
+body.login.dark-mode .login-badge h1 { color: #e2e8f0; }
+.login-badge h1 span { color: #B59A4A; }
+.login-badge p { font-size: 0.9rem; color: #4A4A4A; margin-top: 0.5rem; }
+body.login.dark-mode .login-badge p { color: #94a3b8; }
+.login .password-reset-link { margin-top: 1rem; text-align: center; }
+.login .password-reset-link a { color: #B59A4A; font-size: 0.9rem; }
+.login .password-reset-link a:hover { color: #3A1F1B; }
+body.login.dark-mode .password-reset-link a { color: #C7AF63; }
+body.login.dark-mode .password-reset-link a:hover { color: #e2e8f0; }
+</style>
+{% endblock %}
+
+{% block bodyclass %}{{ block.super }} login{% endblock %}
+
+{% block usertools %}{% endblock %}
+{% block nav-global %}{% endblock %}
+{% block nav-sidebar %}{% endblock %}
+{% block content_title %}{% endblock %}
+{% block nav-breadcrumbs %}{% endblock %}
+
+{% block content %}
+<button type="button" class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode" title="Dark mode / Light mode">☀️</button>
+
+{% if form.errors and not form.non_field_errors %}
+<p class="errornote">
+{% blocktranslate count counter=form.errors.items|length %}Please correct the error below.{% plural %}Please correct the errors below.{% endblocktranslate %}
+</p>
+{% endif %}
+
+{% if form.non_field_errors %}
+{% for error in form.non_field_errors %}
+<p class="errornote">{{ error }}</p>
+{% endfor %}
+{% endif %}
+
+<div id="content-main">
+
+{% if user.is_authenticated %}
+<p class="errornote">
+{% blocktranslate trimmed %}
+You are authenticated as {{ username }}, but are not authorized to
+access this page. Would you like to login to a different account?
+{% endblocktranslate %}
+</p>
+{% endif %}
+
+<div class="login-badge">
+  <h1>Lora <span>Real Estate</span> Admin</h1>
+  <p>Sign in to manage your listings</p>
+</div>
+
+<form action="{{ app_path }}" method="post" id="login-form">{% csrf_token %}
+  <div class="form-row">
+    {{ form.username.errors }}
+    {{ form.username.label_tag }}
+    {{ form.username }}
+  </div>
+  <div class="form-row">
+    {{ form.password.errors }}
+    {{ form.password.label_tag }}
+    <div class="password-wrap">
+      {{ form.password }}
+      <button type="button" class="pw-toggle" id="pw-toggle" aria-label="Show password" title="Show password">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+          <circle cx="12" cy="12" r="3"/>
+        </svg>
+      </button>
+    </div>
+    <input type="hidden" name="next" value="{{ next }}">
+  </div>
+  {% url 'admin_password_reset' as password_reset_url %}
+  {% if password_reset_url %}
+  <div class="password-reset-link">
+    <a href="{{ password_reset_url }}">{% translate 'Forgotten your login credentials?' %}</a>
+  </div>
+  {% endif %}
+  <div class="submit-row">
+    <input type="submit" value="{% translate 'Log in' %}">
+  </div>
+</form>
+
+</div>
+
+<script>
+(function() {
+  var pwInput = document.getElementById('id_password');
+  var pwToggle = document.getElementById('pw-toggle');
+  if (pwInput && pwToggle) {
+    var eyeOpen = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';
+    var eyeClosed = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>';
+    pwToggle.addEventListener('click', function() {
+      var isPw = pwInput.type === 'password';
+      pwInput.type = isPw ? 'text' : 'password';
+      pwToggle.innerHTML = isPw ? eyeClosed : eyeOpen;
+      pwToggle.setAttribute('aria-label', isPw ? 'Hide password' : 'Show password');
+      pwToggle.setAttribute('title', isPw ? 'Hide password' : 'Show password');
+    });
+  }
+  var themeToggle = document.getElementById('theme-toggle');
+  var body = document.body;
+  var dark = localStorage.getItem('lora-admin-dark') === '1';
+  if (dark) { body.classList.add('dark-mode'); themeToggle.textContent = '🌙'; }
+  if (themeToggle) {
+    themeToggle.addEventListener('click', function() {
+      var isDark = body.classList.toggle('dark-mode');
+      themeToggle.textContent = isDark ? '🌙' : '☀️';
+      localStorage.setItem('lora-admin-dark', isDark ? '1' : '0');
+    });
+  }
+})();
+</script>
+{% endblock %}
