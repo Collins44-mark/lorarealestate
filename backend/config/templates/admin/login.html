@@ -217,12 +217,6 @@ access this page. Would you like to login to a different account?
     </div>
     <input type="hidden" name="next" value="{{ next }}">
   </div>
-  {% url 'admin_password_reset' as password_reset_url %}
-  {% if password_reset_url %}
-  <div class="password-reset-link">
-    <a href="{{ password_reset_url }}">{% translate 'Forgotten your login credentials?' %}</a>
-  </div>
-  {% endif %}
   <div class="submit-row">
     <input type="submit" value="{% translate 'Log in' %}">
   </div>
