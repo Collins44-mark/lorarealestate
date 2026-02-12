@@ -39,6 +39,7 @@ def health(request):
         {
             "status": "ok",
             "admin": "/admin/",
+            "admin_debug": "/admin-debug/",
             "api": "/api/",
         }
     )
@@ -53,6 +54,7 @@ router.register(r"locations", LocationViewSet, basename="location")
 urlpatterns = [
     path("", health),
     path("admin-debug/", admin_debug),
+    path("admin-debug", admin_debug),  # no trailing slash
     path("admin/", admin.site.urls),
     path("api/", include(router.urls)),
     path("api/auth/token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
