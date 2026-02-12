@@ -52,6 +52,22 @@ A modern, professional real estate website for buying and renting properties.
 └── README.md
 ```
 
+## Backend Admin
+
+The Django admin is at `/admin/`. Default login: **username** `lora`, **password** `lora@25`.
+
+After first deploy or when the database is fresh, create the admin user:
+
+```bash
+cd backend && python manage.py ensure_admin
+```
+
+**Admin workflow:**
+1. **Locations** – Add locations first (e.g. "Oyster Bay", "Dar es Salaam").
+2. **Properties** – Add properties, assign a location, upload images. Use *Featured* for homepage, *Published* to show on site.
+3. **Inquiries** – View contact form submissions.
+4. **Bookings** – Manage viewing requests and update status (Pending/Confirmed/Cancelled).
+
 ## Future-Ready
 
 - Property data in `js/properties.js` can be replaced with API calls

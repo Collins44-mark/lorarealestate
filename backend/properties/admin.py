@@ -51,11 +51,29 @@ class PropertyAdmin(admin.ModelAdmin):
 
     fieldsets = (
         (None, {"fields": ("title", "description")}),
-        ("Listing", {"fields": ("property_type", "listing_type", "price", "currency", "location")}),
+        (
+            "Listing",
+            {
+                "fields": ("property_type", "listing_type", "price", "currency", "location"),
+                "description": "Add Locations first under Locations if needed.",
+            },
+        ),
         ("Details", {"fields": ("bedrooms", "bathrooms", "area_size")}),
-        ("Visibility", {"fields": ("featured", "published")}),
+        (
+            "Visibility",
+            {
+                "fields": ("featured", "published"),
+                "description": "Featured: show on homepage. Published: show on site.",
+            },
+        ),
         ("Contact", {"fields": ("contact_phone", "contact_whatsapp")}),
-        ("Media (Cloudinary)", {"fields": ("main_image", "video_url", "main_image_upload", "gallery_uploads", "video_upload")}),
+        (
+            "Media (Cloudinary)",
+            {
+                "fields": ("main_image", "video_url", "main_image_upload", "gallery_uploads", "video_upload"),
+                "description": "Upload main image and gallery images. Cloudinary env vars required.",
+            },
+        ),
     )
 
     readonly_fields = ("main_image", "video_url")
