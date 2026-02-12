@@ -169,9 +169,7 @@ if _cors_origins:
 else:
     # Public read + public inquiry/booking POSTs are allowed from any origin.
     # Admin-only endpoints are protected by JWT and not by CORS.
-    CORS_ALLOW_ALL_ORIGINS = True
-
-# DRF / JWT
+    CORS_ALLOW_ALL_ORIGINS = True# DRF / JWT
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework_simplejwt.authentication.JWTAuthentication",
