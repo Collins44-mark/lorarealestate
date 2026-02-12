@@ -7,20 +7,33 @@ from .models import Property, PropertyImage
 from .services import upload_property_media
 
 
+class PropertyImageInlineForm(forms.ModelForm):
+    class Meta:
+        model = PropertyImage
+        fields = ("url", "public_id", "sort_order", "visible")
+        widgets = {
+            "url": forms.HiddenInput(),
+            "public_id": forms.HiddenInput(),
+        }
+
+
 class PropertyImageInline(admin.TabularInline):
     model = PropertyImage
-    extra = 1
-    fields = ("preview", "url", "sort_order")
+    form = PropertyImageInlineForm
+    template = "admin/properties/propertyimage_inline.html"
+    extra = 0
+    fields = ("preview", "url", "public_id", "sort_order", "visible")
     readonly_fields = ("preview",)
     ordering = ("sort_order", "id")
     verbose_name = "Gallery image"
     verbose_name_plural = "Gallery images"
+    can_delete = True
 
     def preview(self, obj: PropertyImage):
-        if not obj.url:
+        if not obj or not obj.url:
             return "-"
         return format_html(
-            '<img src="{}" style="width:72px;height:72px;object-fit:cover;border-radius:8px;border:1px solid rgba(58,31,27,0.12);" />',
+            '<img src="{}" alt="" style="width:100px;height:70px;object-fit:cover;border-radius:8px;border:1px solid #e5e7eb;" />',
             obj.url,
         )
 

@@ -69,6 +69,7 @@ lora_admin_urls = ([
 urlpatterns = [
     path("", health),
     path("admin/doc/", include("django.contrib.admindocs.urls")),
+    path("django-admin/", admin.site.urls),
     path(
         "admin/",
         include([

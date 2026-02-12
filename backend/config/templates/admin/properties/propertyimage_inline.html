@@ -1,0 +1,103 @@
+{% load i18n admin_urls static admin_modify %}
+
+<div class="property-images-inline-card js-inline-admin-formset inline-group"
+     id="{{ inline_admin_formset.formset.prefix }}-group"
+     data-inline-type="tabular"
+     data-inline-formset="{{ inline_admin_formset.inline_formset_data }}">
+  <div class="property-images-inline-header">
+    <h3>{{ inline_admin_formset.opts.verbose_name_plural|capfirst }}</h3>
+    <div class="property-images-inline-header-actions">
+      <a href="#" class="addlink add-row-link" id="add-{{ inline_admin_formset.formset.prefix }}-btn">+ Add Image</a>
+    </div>
+  </div>
+
+  {{ inline_admin_formset.formset.management_form }}
+  {{ inline_admin_formset.formset.non_form_errors }}
+
+  <div class="tabular inline-related property-images-inline-table-wrap">
+    <table class="property-images-inline-table">
+      <thead>
+        <tr>
+          <th class="col-preview">Preview</th>
+          <th class="col-order">Order</th>
+          <th class="col-status">Status</th>
+          <th class="col-actions">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for inline_admin_form in inline_admin_formset %}
+        <tr class="property-image-row form-row{% if inline_admin_form.form.non_field_errors %} errors{% endif %}{% if forloop.last and inline_admin_formset.has_add_permission %} empty-form{% endif %}"
+            id="{{ inline_admin_formset.formset.prefix }}-{% if forloop.last and inline_admin_formset.has_add_permission %}empty{% else %}{{ forloop.counter0 }}{% endif %}">
+          {% if inline_admin_form.form.non_field_errors %}
+          <td colspan="4" class="row-errors">{{ inline_admin_form.form.non_field_errors }}</td>
+          {% else %}
+          <td class="col-preview-cell">
+            {% for fieldset in inline_admin_form %}
+              {% for line in fieldset %}
+                {% for field in line %}
+                  {% if field.field.name == 'preview' %}
+                    <div class="img-thumb-inline">{% if field.contents %}{{ field.contents }}{% else %}<span class="no-preview">—</span>{% endif %}</div>
+                  {% endif %}
+                {% endfor %}
+              {% endfor %}
+            {% endfor %}
+          </td>
+          <td class="col-order-cell">
+            {% for fieldset in inline_admin_form %}
+              {% for line in fieldset %}
+                {% for field in line %}
+                  {% if field.field.name == 'sort_order' %}
+                    {% if field.is_readonly %}{{ field.contents }}{% else %}{{ field.field.errors }}{{ field.field }}{% endif %}
+                  {% endif %}
+                {% endfor %}
+              {% endfor %}
+            {% endfor %}
+          </td>
+          <td class="col-status-cell">
+            {% for fieldset in inline_admin_form %}
+              {% for line in fieldset %}
+                {% for field in line %}
+                  {% if field.field.name == 'visible' %}
+                    {% if field.is_readonly %}{{ field.contents }}{% else %}{{ field.field.errors }}<label class="toggle-inline">{{ field.field }} Visible</label>{% endif %}
+                  {% endif %}
+                {% endfor %}
+              {% endfor %}
+            {% endfor %}
+          </td>
+          <td class="col-actions-cell">
+            {% if inline_admin_form.needs_explicit_pk_field %}{{ inline_admin_form.pk_field.field }}{% endif %}
+            {% if inline_admin_form.fk_field %}{{ inline_admin_form.fk_field.field }}{% endif %}
+            {% for fieldset in inline_admin_form %}
+              {% for line in fieldset %}
+                {% for field in line %}
+                  {% if field.field.name == 'url' or field.field.name == 'public_id' %}
+                    {{ field.field }}
+                  {% endif %}
+                {% endfor %}
+              {% endfor %}
+            {% endfor %}
+            {% if inline_admin_formset.formset.can_delete and inline_admin_formset.has_delete_permission and inline_admin_form.original %}
+            <label class="delete-label">{{ inline_admin_form.deletion_field.field }} Delete</label>
+            {% endif %}
+          </td>
+          {% endif %}
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+(function() {
+  var card = document.getElementById('{{ inline_admin_formset.formset.prefix }}-group');
+  var addBtn = document.getElementById('add-{{ inline_admin_formset.formset.prefix }}-btn');
+  if (card && addBtn) {
+    addBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      var addLink = card.querySelector('.add-row a.addlink');
+      if (addLink) addLink.click();
+    });
+  }
+})();
+</script>
