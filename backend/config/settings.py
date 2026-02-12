@@ -26,8 +26,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get("SECRET_KEY", "dev-insecure-secret-key")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-# Set DEBUG=1 or SHOW_500_ERROR=1 to see full traceback (remove after fixing)
-DEBUG = os.environ.get("DEBUG", "0").lower() in ("1", "true", "yes", "on") or os.environ.get("SHOW_500_ERROR", "0") == "1"
+DEBUG = os.environ.get("DEBUG", "0").lower() in ("1", "true", "yes", "on")
 
 # Render sets RENDER_EXTERNAL_HOSTNAME (e.g. lorarealestate.onrender.com)
 _render_hostname = os.environ.get("RENDER_EXTERNAL_HOSTNAME", "").strip()
@@ -44,6 +43,7 @@ if _allowed_hosts_env:
 # Application definition
 
 INSTALLED_APPS = [
+    'django.contrib.admindocs',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -85,7 +85,7 @@ LOGIN_URL = "/admin/login/"
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / "config" / "templates"],
+        'DIRS': [],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -155,8 +155,7 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 STATIC_ROOT = BASE_DIR / "staticfiles"
-_static_dir = BASE_DIR / "config" / "static"
-STATICFILES_DIRS = [_static_dir] if _static_dir.exists() else []
+STATICFILES_DIRS = []
 
 # Use CompressedStaticFilesStorage (no manifest) to avoid 500s when custom files aren't in manifest
 STATICFILES_STORAGE = "whitenoise.storage.CompressedStaticFilesStorage"

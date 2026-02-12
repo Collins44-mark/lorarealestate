@@ -56,8 +56,6 @@ A modern, professional real estate website for buying and renting properties.
 
 The Django admin is at `/admin/`. Default login: **username** `lora`, **password** `lora@25`.
 
-**If you get 500 on login:** In Render Dashboard → your service → Environment, add `SHOW_500_ERROR=1`, redeploy, and try again. You'll see the full traceback. Remove the var after fixing.
-
 After first deploy or when the database is fresh, create the admin user:
 
 ```bash
