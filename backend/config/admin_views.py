@@ -331,11 +331,20 @@ def location_delete(request, pk):
 
 @staff_required
 def bookings_list(request):
-    bookings = Booking.objects.select_related("property").order_by("-created_at")[:50]
+    qs = Booking.objects.select_related("property").order_by("-created_at")
+    status_filter = (request.GET.get("status") or "").strip()
+    if status_filter and status_filter in dict(Booking.Status.choices):
+        qs = qs.filter(status=status_filter)
+    bookings = list(qs[:50])
     return render(
         request,
         "lora_admin/bookings.html",
-        {"bookings": bookings, "page_title": "Bookings"},
+        {
+            "bookings": bookings,
+            "page_title": "Bookings",
+            "status_filter": status_filter,
+            "status_choices": Booking.Status.choices,
+        },
     )
 
 

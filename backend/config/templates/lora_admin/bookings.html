@@ -7,6 +7,24 @@
   <p class="page-subtitle">Viewing requests from the website. Contact guests directly via phone or WhatsApp.</p>
 </div>
 
+<div class="filter-bar bookings-filter">
+  <form method="get" class="filter-form filter-form-inline">
+    <div class="filter-group">
+      <label for="status">Status</label>
+      <select name="status" id="status" class="form-input form-select">
+        <option value="">All</option>
+        {% for val, label in status_choices %}
+        <option value="{{ val }}" {% if status_filter == val %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="filter-group">
+      <label>&nbsp;</label>
+      <button type="submit" class="btn btn-primary">Filter</button>
+    </div>
+  </form>
+</div>
+
 <div class="table-container">
   <table class="data-table">
     <thead>

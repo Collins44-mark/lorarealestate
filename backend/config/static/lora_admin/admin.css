@@ -464,6 +464,11 @@ body.lora-admin {
 .booking-meta { margin-top: 1rem; color: var(--text-muted); }
 .form-row-inline { display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap; }
 
+.bookings-filter { margin-bottom: 1.5rem; }
+.bookings-filter .filter-form-inline { display: flex; gap: 1rem; align-items: flex-end; flex-wrap: wrap; }
+.bookings-filter .filter-group label { display: block; margin-bottom: 0.25rem; font-size: 0.9rem; color: var(--text-muted); }
+.bookings-filter .form-select { min-width: 160px; }
+
 .booking-phone-section { background: rgba(212, 175, 55, 0.08); border-radius: 10px; padding: 1.25rem; }
 .booking-phone-block { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem; }
 .booking-phone-number { font-size: 1.25rem; font-weight: 600; color: var(--brown-deep); }
