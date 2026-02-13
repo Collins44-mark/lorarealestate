@@ -115,14 +115,9 @@
     <div class="property-images-header">
       <h3>5. Property Images</h3>
       <div class="property-images-header-actions">
-        <label for="id_main_image_upload" class="btn btn-add-image" id="add-first-btn" title="Add image">
-          <input type="file" name="main_image_upload" id="id_main_image_upload" accept="image/*" style="display:none">
-          + Add Image
-        </label>
-        <div class="btn btn-add-image" id="add-more-btn" title="Add one image" style="display:none" role="button" tabindex="0">+ Add Image</div>
-        <label for="id_multi_image_upload" class="btn btn-add-image" id="add-multi-btn" title="Add multiple images" style="display:none">
-          <input type="file" id="id_multi_image_upload" accept="image/*" multiple style="display:none">
-          + Add Multiple
+        <label for="id_gallery_file_input" class="btn btn-add-image" title="Add one or more images">
+          <input type="file" id="id_gallery_file_input" accept="image/*" multiple style="display:none">
+          + Add Image(s)
         </label>
       </div>
     </div>
@@ -156,33 +151,18 @@
             {% endfor %}
           {% endif %}
           <tr class="empty-row" id="images-empty-row" {% if property and property.main_image or property and property.gallery_images.all %}style="display:none"{% endif %}>
-            <td colspan="4" class="empty-cell">No images yet. Click &quot;+ Add Image&quot; to add.</td>
+            <td colspan="4" class="empty-cell">No images yet. Click &quot;+ Add Image(s)&quot; to add.</td>
           </tr>
         </tbody>
       </table>
     </div>
-    <template id="inline-add-row-tpl">
-      <tr class="inline-add-row">
-        <td><div class="img-thumb img-thumb-placeholder"><span class="no-preview">Select file</span></div></td>
-        <td class="col-caption-cell">—</td>
-        <td><input type="number" class="image-order-input inline-order" value="0" min="0"></td>
-        <td>
-          <div class="inline-add-actions">
-            <input type="file" class="inline-file-input" accept="image/*" style="display:none">
-            <button type="button" class="btn btn-choose-file inline-upload-trigger">Choose file</button>
-            <button type="button" class="btn btn-save-sm inline-save">Save</button>
-            <button type="button" class="btn btn-cancel-sm inline-cancel">Cancel</button>
-          </div>
-        </td>
-      </tr>
-    </template>
   </section>
 
   <section class="form-section property-video-section">
     <h3>6. Property Video</h3>
     <div class="video-upload-card">
       <label for="id_video_upload" class="form-group">Upload or replace video</label>
-      {{ form.video_upload }}
+      <input type="file" name="video_upload" id="id_video_upload" accept="video/mp4" class="form-input">
       {% if property and property.video_url %}
       <div class="video-preview-card">
         <p class="video-label">Current video</p>
@@ -203,10 +183,7 @@
   var table = document.getElementById('property-images-table');
   var tbody = table && table.querySelector('tbody');
   var emptyRow = document.getElementById('images-empty-row');
-  var addFirstBtn = document.getElementById('add-first-btn');
-  var addMoreBtn = document.getElementById('add-more-btn');
-  var tpl = document.getElementById('inline-add-row-tpl');
-  var mainInput = document.getElementById('id_main_image_upload');
+  var galleryInput = document.getElementById('id_gallery_file_input');
 
   if (!tbody) return;
 
@@ -217,42 +194,23 @@
     return tbody.querySelectorAll('tr.image-row');
   }
 
-  var addMultiBtn = document.getElementById('add-multi-btn');
-  var multiInput = document.getElementById('id_multi_image_upload');
-
   function toggleUI() {
-    var rows = getDisplayRows();
-    if (emptyRow) emptyRow.style.display = rows.length ? 'none' : 'table-row';
-    if (addFirstBtn) addFirstBtn.style.display = rows.length ? 'none' : 'inline-flex';
-    var showAddMore = rows.length > 0;
-    if (addMoreBtn) addMoreBtn.style.display = showAddMore ? 'inline-flex' : 'none';
-    if (addMultiBtn) addMultiBtn.style.display = showAddMore ? 'inline-flex' : 'none';
+    if (emptyRow) emptyRow.style.display = getDisplayRows().length ? 'none' : 'table-row';
   }
 
-  function addDisplayRowFromMain(src) {
+  function addDisplayRowFromFile(src, fileInput, isMain) {
     var tr = document.createElement('tr');
     tr.className = 'image-row';
-    tr.dataset.type = 'main';
-    tr.dataset.id = 'main';
+    tr.dataset.type = isMain ? 'main' : 'gallery';
+    tr.dataset.id = isMain ? 'main' : 'new-' + Date.now();
+    var captionCell = isMain
+      ? '<input type="hidden" name="gallery_visible_main" value="on">—'
+      : '—';
     tr.innerHTML = '<td><div class="img-thumb"><img src="'+src.replace(/"/g,'&quot;')+'" alt=""></div></td>' +
-      '<td class="col-caption-cell"><input type="hidden" name="gallery_visible_main" value="on">—</td>' +
-      '<td><input type="number" name="gallery_order_main" value="0" class="image-order-input" min="0"></td>' +
+      '<td class="col-caption-cell">'+captionCell+'</td>' +
+      '<td><input type="number" class="image-order-input" name="'+(isMain?'gallery_order_main':'')+'" min="0" value="0"></td>' +
       '<td><div class="image-actions-inline"><button type="button" class="btn btn-delete-img del-btn">Delete</button></div></td>';
-    emptyRow.insertAdjacentElement('beforebegin', tr);
-    bindRowActions(tr);
-    toggleUI();
-  }
-
-  function addDisplayRowFromFile(src, fileInput) {
-    var tr = document.createElement('tr');
-    tr.className = 'image-row';
-    tr.dataset.type = 'gallery';
-    tr.dataset.id = 'new-' + Date.now();
-    tr.innerHTML = '<td><div class="img-thumb"><img src="'+src.replace(/"/g,'&quot;')+'" alt=""></div></td>' +
-      '<td class="col-caption-cell">—</td>' +
-      '<td><input type="number" class="image-order-input" min="0" value="0"></td>' +
-      '<td><div class="image-actions-inline"><button type="button" class="btn btn-delete-img del-btn">Delete</button></div></td>';
-    fileInput.name = 'gallery_uploads';
+    fileInput.name = isMain ? 'main_image_upload' : 'gallery_uploads';
     fileInput.style.cssText = 'position:absolute;clip:rect(0,0,0,0);width:1px;height:1px;margin:-1px;overflow:hidden;';
     tr.querySelector('.image-actions-inline').appendChild(fileInput);
     emptyRow.insertAdjacentElement('beforebegin', tr);
@@ -281,28 +239,21 @@
     var rows = getDisplayRows();
     rows.forEach(function(r, i) {
       var inp = r.querySelector('.image-order-input');
-      if (inp && (!inp.name || inp.name === 'gallery_order_tmp')) inp.value = i;
+      if (inp && inp.name !== 'gallery_order_main' && !String(inp.name || '').startsWith('gallery_order_')) {
+        inp.value = i;
+      }
     });
   }
 
-  if (addFirstBtn) addFirstBtn.addEventListener('change', function(e) {
-    if (!e.target.files || !e.target.files.length) return;
-    var r = new FileReader();
-    r.onload = function() { addDisplayRowFromMain(r.result); };
-    r.readAsDataURL(e.target.files[0]);
-  });
-
-  if (addMoreBtn) {
-    addMoreBtn.addEventListener('click', showInlineAddRow);
-    addMoreBtn.addEventListener('keydown', function(e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); showInlineAddRow(); } });
-  }
-
-  if (multiInput) {
-    multiInput.addEventListener('change', function(e) {
+  if (galleryInput) {
+    galleryInput.addEventListener('change', function(e) {
       var files = e.target.files;
       if (!files || !files.length) return;
+      var rows = getDisplayRows();
+      var hasMain = false;
+      rows.forEach(function(r) { if (r.dataset.type === 'main') hasMain = true; });
       for (var i = 0; i < files.length; i++) {
-        (function(file) {
+        (function(file, index) {
           var fileInput = document.createElement('input');
           fileInput.type = 'file';
           fileInput.accept = 'image/*';
@@ -312,55 +263,15 @@
           fileInput.files = dt.files;
           var reader = new FileReader();
           reader.onload = function() {
-            addDisplayRowFromFile(reader.result, fileInput);
+            var isMain = !hasMain && index === 0;
+            if (isMain) hasMain = true;
+            addDisplayRowFromFile(reader.result, fileInput, isMain);
           };
           reader.readAsDataURL(file);
-        })(files[i]);
+        })(files[i], i);
       }
       e.target.value = '';
     });
-  }
-
-  function showInlineAddRow() {
-    if (!tpl) return;
-    var existing = tbody.querySelector('.inline-add-row');
-    if (existing) return;
-    var clone = tpl.content.cloneNode(true);
-    var tr = clone.querySelector('tr');
-    var orderInp = tr.querySelector('.inline-order');
-    orderInp.value = getDisplayRows().length;
-    var fileInput = tr.querySelector('.inline-file-input');
-    var uploadBtn = tr.querySelector('.inline-upload-trigger');
-    var saveBtn = tr.querySelector('.inline-save');
-    var cancelBtn = tr.querySelector('.inline-cancel');
-    var thumb = tr.querySelector('.img-thumb-placeholder');
-
-    uploadBtn.addEventListener('click', function() { fileInput.click(); });
-    fileInput.addEventListener('change', function() {
-      if (!this.files || !this.files.length) return;
-      var r = new FileReader();
-      r.onload = function() {
-        thumb.innerHTML = '';
-        var img = document.createElement('img');
-        img.src = r.result;
-        img.alt = '';
-        thumb.appendChild(img);
-      };
-      r.readAsDataURL(this.files[0]);
-    });
-    saveBtn.addEventListener('click', function() {
-      if (!fileInput.files || !fileInput.files.length) { alert('Please select an image first.'); return; }
-      var r = new FileReader();
-      r.onload = function() {
-        addDisplayRowFromFile(r.result, fileInput);
-        tr.remove();
-        toggleUI();
-      };
-      r.readAsDataURL(fileInput.files[0]);
-    });
-    cancelBtn.addEventListener('click', function() { tr.remove(); });
-
-    emptyRow.insertAdjacentElement('beforebegin', tr);
   }
 
   form.addEventListener('submit', function() {
@@ -371,12 +282,8 @@
       if (orderInp && orderInp.name !== 'gallery_order_main' && !String(orderInp.name || '').startsWith('gallery_order_')) {
         orderInp.name = 'gallery_order_new_' + i;
       }
-      if (inp) inp.name = i === 0 ? 'main_image_upload' : 'gallery_uploads';
+      if (inp && !inp.name) inp.name = row.dataset.type === 'main' ? 'main_image_upload' : 'gallery_uploads';
     });
-    if (rows.length > 0) {
-      var firstFile = rows[0].querySelector('input[type="file"]');
-      if (firstFile && mainInput) mainInput.removeAttribute('name');
-    }
     if (mainImageDeleted) {
       var hi = document.createElement('input');
       hi.type = 'hidden';

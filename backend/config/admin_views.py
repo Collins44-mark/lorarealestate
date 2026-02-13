@@ -5,13 +5,7 @@ Replaces default Django admin UI with custom views and templates.
 from django.contrib.auth import authenticate, login, logout
 from django.db.models import Q
 from django import forms
-from django.forms import (
-    ClearableFileInput,
-    FileField,
-    ModelForm,
-    Textarea,
-    TextInput,
-)
+from django.forms import ModelForm, Textarea, TextInput
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
@@ -51,14 +45,9 @@ def staff_required(view_func):
 # --- Forms ---
 
 
-class MultiFileInput(ClearableFileInput):
-    allow_multiple_selected = True
-
-
 class PropertyForm(ModelForm):
-    main_image_upload = FileField(required=False, widget=ClearableFileInput(attrs={"accept": "image/*", "class": "form-input"}))
-    gallery_uploads = FileField(required=False, widget=MultiFileInput(attrs={"multiple": True, "accept": "image/*", "class": "form-input"}))
-    video_upload = FileField(required=False, widget=ClearableFileInput(attrs={"accept": "video/mp4", "class": "form-input"}))
+    # main_image_upload, gallery_uploads, video_upload handled via request.FILES in view
+    # (avoids "No file was submitted" validation errors with dynamic file inputs)
 
     class Meta:
         model = Property
@@ -174,8 +163,8 @@ def property_add(request):
     form = PropertyForm(request.POST or None, request.FILES or None, initial={"published": True})
     if request.method == "POST" and form.is_valid():
         prop = form.save()
-        main_image_file = form.cleaned_data.get("main_image_upload")
-        video_file = form.cleaned_data.get("video_upload")
+        main_image_file = request.FILES.get("main_image_upload") if request.FILES else None
+        video_file = request.FILES.get("video_upload") if request.FILES else None
         gallery_files = request.FILES.getlist("gallery_uploads") if request.FILES else []
         try:
             upload_property_media(
@@ -214,8 +203,8 @@ def property_edit(request, pk):
     if request.method == "POST" and form.is_valid():
         form.save()
         post = request.POST
-        main_image_file = form.cleaned_data.get("main_image_upload")
-        video_file = form.cleaned_data.get("video_upload")
+        main_image_file = request.FILES.get("main_image_upload") if request.FILES else None
+        video_file = request.FILES.get("video_upload") if request.FILES else None
         gallery_files = request.FILES.getlist("gallery_uploads") if request.FILES else []
         main_image_delete = post.get("main_image_delete") == "1"
         gallery_delete_ids = [x.strip() for x in (post.get("gallery_delete_ids") or "").split(",") if x.strip()]

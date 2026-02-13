@@ -42,9 +42,16 @@ class MultiFileInput(forms.ClearableFileInput):
     allow_multiple_selected = True
 
 
+class OptionalMultiFileField(forms.FileField):
+    """FileField that never raises 'No file was submitted' - files come from request.FILES in save_model."""
+
+    def clean(self, data, initial=None):
+        return None
+
+
 class PropertyAdminForm(forms.ModelForm):
     main_image_upload = forms.ImageField(required=False, help_text="Upload main image (jpg/jpeg/png/webp).")
-    gallery_uploads = forms.FileField(
+    gallery_uploads = OptionalMultiFileField(
         required=False,
         widget=MultiFileInput(attrs={"multiple": True}),
         help_text="Upload multiple gallery images (jpg/jpeg/png/webp).",
