@@ -59,6 +59,7 @@ INSTALLED_APPS = [
     'django_filters',
 
     # Local apps (order = admin sidebar: Locations → Properties → Bookings → Inquiries)
+    'config',
     'accounts',
     'locations',
     'properties',
