@@ -984,6 +984,50 @@ p {
   transition: transform 0.3s ease;
 }
 
+.modal-book-visit {
+  max-width: 500px;
+  box-shadow: var(--shadow-hover);
+}
+
+.modal-header {
+  margin-bottom: 1.5rem;
+}
+
+.modal-header h3 {
+  margin-bottom: 0.5rem;
+  font-size: 1.35rem;
+}
+
+.modal-subtitle {
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.book-visit-form .form-row-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.book-visit-form .form-group {
+  margin-bottom: 1.25rem;
+}
+
+.book-visit-form label .required { color: #c0392b; }
+.book-visit-form .form-hint {
+  font-weight: 400;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.btn-block {
+  width: 100%;
+  padding: 0.9rem 1.5rem;
+  font-size: 1rem;
+  margin-top: 0.25rem;
+}
+
 .modal-overlay.open .modal-content {
   transform: scale(1);
 }
@@ -1741,6 +1785,14 @@ p {
     padding: 1.5rem;
     margin: 0.5rem;
   }
+
+  .book-visit-form .form-row-2 {
+    grid-template-columns: 1fr;
+  }
+
+  .modal-book-visit {
+    max-width: 100%;
+  }
 }
 
 /* Large screens - prevent over-stretching */
@@ -1768,4 +1820,10 @@ p {
   .property-images-grid {
     grid-template-columns: 1fr;
   }
+}
+
+/* Safe area for notched devices */
+@supports (padding: env(safe-area-inset-bottom)) {
+  body { padding-bottom: env(safe-area-inset-bottom); }
+  .whatsapp-float { bottom: calc(1rem + env(safe-area-inset-bottom)); right: calc(1rem + env(safe-area-inset-right)); }
 }

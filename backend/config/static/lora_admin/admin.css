@@ -425,6 +425,7 @@ body.lora-admin {
 
 .badge-pending { background: rgba(212, 175, 55, 0.2); color: var(--gold-muted); }
 .badge-confirmed { background: rgba(39, 174, 96, 0.2); color: var(--success); }
+.badge-completed { background: rgba(39, 174, 96, 0.25); color: var(--success); }
 .badge-cancelled { background: rgba(192, 57, 43, 0.2); color: var(--danger); }
 
 /* Booking contact buttons */
@@ -462,6 +463,14 @@ body.lora-admin {
 .booking-message { white-space: pre-wrap; padding: 0.5rem; background: var(--main-bg); border-radius: 8px; }
 .booking-meta { margin-top: 1rem; color: var(--text-muted); }
 .form-row-inline { display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap; }
+
+.booking-phone-section { background: rgba(212, 175, 55, 0.08); border-radius: 10px; padding: 1.25rem; }
+.booking-phone-block { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem; }
+.booking-phone-number { font-size: 1.25rem; font-weight: 600; color: var(--brown-deep); }
+.booking-no-phone { color: var(--text-muted); margin-right: 0.5rem; }
+.contact-actions-block { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+.btn-lg-contact { padding: 0.5rem 1rem; font-size: 0.95rem; }
+.booking-reminder { margin-top: 0.75rem; color: var(--text-muted); font-style: italic; }
 
 .empty-state {
   color: var(--text-muted);
@@ -1264,18 +1273,55 @@ body.lora-admin {
   color: var(--danger);
 }
 
-/* Responsive */
+/* Responsive - Full device support */
+@media (max-width: 1200px) {
+  .lora-main { padding: 1.25rem; }
+}
+
 @media (max-width: 900px) {
   .detail-grid { grid-template-columns: 1fr; }
   .form-row-3 { grid-template-columns: 1fr; }
-  .property-images-table-wrap { overflow-x: auto; }
+  .property-images-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .table-container { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .data-table { min-width: 700px; }
 }
 
 @media (max-width: 768px) {
-  .sidebar-toggle { left: 1rem; }
-  .lora-main { margin-left: 0; padding: 1rem; }
-  .page-header { margin: -1rem -1rem 1.5rem -1rem; padding: 1.25rem 1rem; }
+  .sidebar-toggle { left: 1rem; top: 0.75rem; }
+  .lora-sidebar { width: 280px; }
+  .lora-sidebar.collapsed { transform: translateX(-100%); width: 0; overflow: hidden; }
+  .lora-sidebar:not(.collapsed) { box-shadow: 4px 0 20px rgba(0,0,0,0.15); }
+  .lora-main { margin-left: 0; padding: 1rem; min-height: 100vh; }
+  .page-header { margin: -1rem -1rem 1.5rem -1rem; padding: 1.25rem 1rem; flex-direction: column; align-items: flex-start; gap: 1rem; }
   .form-row { grid-template-columns: 1fr; }
+  .form-row-inline { flex-direction: column; align-items: stretch; }
   .dashboard-grid { grid-template-columns: 1fr; }
-  .page-header { flex-direction: column; align-items: flex-start; }
+  .booking-phone-block { flex-direction: column; align-items: flex-start; }
+  .contact-actions-block { width: 100%; }
+  .btn-lg-contact { min-height: 44px; min-width: 44px; }
+  .booking-detail-card { padding: 1rem; }
+  .booking-status-form .form-row-inline select,
+  .booking-status-form .form-row-inline button { width: 100%; }
+}
+
+@media (max-width: 600px) {
+  .data-table { min-width: 560px; font-size: 0.9rem; }
+  .data-table th, .data-table td { padding: 0.6rem 0.8rem; }
+  .booking-contact-actions { flex-direction: column; }
+  .booking-contact-actions .btn { width: 100%; min-height: 40px; }
+  .page-header h1 { font-size: 1.35rem; }
+  .page-subtitle { font-size: 0.9rem; }
+}
+
+@media (max-width: 400px) {
+  .lora-main { padding: 0.75rem; }
+  .page-header { padding: 1rem 0.75rem; }
+  .data-table { min-width: 480px; }
+}
+
+/* Touch targets - minimum 44px for accessibility */
+@media (pointer: coarse) {
+  .btn, .btn-sm { min-height: 44px; padding: 0.5rem 1rem; }
+  .nav-item { min-height: 44px; display: flex; align-items: center; padding: 0.5rem 1rem; }
+  .modal-close { min-width: 44px; min-height: 44px; }
 }

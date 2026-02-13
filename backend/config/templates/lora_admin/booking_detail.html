@@ -8,6 +8,23 @@
 </div>
 
 <div class="booking-detail-card">
+  <!-- Prominent Customer Phone Section -->
+  <div class="booking-detail-section booking-phone-section">
+    <h3>Customer Contact Number</h3>
+    <div class="booking-phone-block">
+      {% if booking.phone %}
+      <span class="booking-phone-number">{{ booking.phone }}</span>
+      <div class="contact-actions-block">
+        <a href="tel:{{ booking.phone }}" class="btn btn-contact btn-lg-contact" title="Call customer">📞 Call</a>
+        <a href="https://wa.me/{{ booking.phone|phone_digits }}" class="btn btn-whatsapp btn-lg-contact" target="_blank" rel="noopener" title="WhatsApp customer">WhatsApp</a>
+      </div>
+      {% else %}
+      <span class="booking-no-phone">No phone provided</span>
+      <a href="mailto:{{ booking.email }}" class="btn btn-contact btn-lg-contact">✉️ Email</a>
+      {% endif %}
+    </div>
+  </div>
+
   <div class="booking-detail-section">
     <h3>Guest Details</h3>
     <dl class="detail-list">
@@ -15,16 +32,6 @@
       <dd>{{ booking.full_name }}</dd>
       <dt>Email</dt>
       <dd><a href="mailto:{{ booking.email }}">{{ booking.email }}</a></dd>
-      {% if booking.phone %}
-      <dt>Phone</dt>
-      <dd>
-        <a href="tel:{{ booking.phone }}">{{ booking.phone }}</a>
-        <span class="contact-actions-inline">
-          <a href="tel:{{ booking.phone }}" class="btn btn-sm btn-contact" title="Call">📞 Call</a>
-          <a href="https://wa.me/{{ booking.phone|phone_digits }}" class="btn btn-sm btn-whatsapp" target="_blank" rel="noopener" title="WhatsApp">WhatsApp</a>
-        </span>
-      </dd>
-      {% endif %}
     </dl>
   </div>
 
@@ -46,20 +53,43 @@
 
   <div class="booking-detail-section">
     <h3>Status</h3>
-    <form method="post" class="booking-status-form">
+    <form method="post" class="booking-status-form" id="bookingStatusForm">
       {% csrf_token %}
       <input type="hidden" name="action" value="update_status">
       <div class="form-row form-row-inline">
-        <select name="status" class="form-input form-select">
+        <select name="status" class="form-input form-select" id="bookingStatusSelect">
           {% for val, label in booking.Status.choices %}
           <option value="{{ val }}" {% if booking.status == val %}selected{% endif %}>{{ label }}</option>
           {% endfor %}
         </select>
-        <button type="submit" class="btn btn-primary">Update Status</button>
+        <button type="submit" class="btn btn-primary" id="bookingStatusBtn">Update Status</button>
       </div>
     </form>
+    {% if booking.status != "completed" and booking.status != "cancelled" %}
+    <p class="booking-reminder"><small>💡 Remember to contact the customer and confirm the visit before marking as Completed.</small></p>
+    {% endif %}
   </div>
 </div>
 
 <p class="booking-meta"><small>Submitted {{ booking.created_at|date:"F d, Y \a\t H:i" }}</small></p>
+
+{% endblock %}
+
+{% block extrajs %}
+<script>
+(function() {
+  var form = document.getElementById('bookingStatusForm');
+  var select = document.getElementById('bookingStatusSelect');
+  if (!form || !select) return;
+
+  form.addEventListener('submit', function(e) {
+    var newStatus = select.value;
+    if (newStatus === 'completed') {
+      if (!confirm('Have you contacted this customer and confirmed the visit? Marking as Completed.')) {
+        e.preventDefault();
+      }
+    }
+  });
+})();
+</script>
 {% endblock %}

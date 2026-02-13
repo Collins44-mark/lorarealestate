@@ -46,7 +46,8 @@
     var toggle = document.getElementById('sidebar-toggle');
     var sidebar = document.getElementById('lora-sidebar');
     var main = document.querySelector('.lora-main');
-    var open = localStorage.getItem('lora-sidebar-open') !== 'false';
+    var stored = localStorage.getItem('lora-sidebar-open');
+    var open = stored !== null ? stored !== 'false' : window.innerWidth >= 768;
     function setSidebar(v) {
       open = v;
       sidebar.classList.toggle('collapsed', !open);
