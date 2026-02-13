@@ -13,7 +13,13 @@
 <form method="post" enctype="multipart/form-data" class="property-form">
   {% csrf_token %}
   {% if form.non_field_errors %}
-  <div class="form-errors">{{ form.non_field_errors }}</div>
+  <div class="form-errors" role="alert">{{ form.non_field_errors }}</div>
+  {% endif %}
+  {% if form.errors and not form.non_field_errors %}
+  <div class="form-errors" role="alert">
+    <strong>Please correct the errors below:</strong>
+    {% for field in form %}{% if field.errors %}<p>{{ field.label }}: {{ field.errors|striptags }}</p>{% endif %}{% endfor %}
+  </div>
   {% endif %}
 
   <section class="form-section">
@@ -44,6 +50,11 @@
     </div>
   </section>
 
+  {% if not has_locations %}
+  <div class="form-errors" role="alert">
+    <strong>Add a location first.</strong> <a href="{% url 'lora_admin:locations' %}">Go to Locations</a> to create one before adding properties.
+  </div>
+  {% endif %}
   <section class="form-section">
     <h3>3. Price & Location</h3>
     <div class="form-row">
@@ -95,7 +106,7 @@
         <label>{{ form.featured }} Featured</label>
       </div>
       <div class="form-group form-check">
-        <label>{{ form.published }} Publish</label>
+        <label>{{ form.published }} Publish <span class="form-hint-inline">(shows on website)</span></label>
       </div>
     </div>
   </section>
@@ -108,7 +119,11 @@
           <input type="file" name="main_image_upload" id="id_main_image_upload" accept="image/*" style="display:none">
           + Add Image
         </label>
-        <div class="btn btn-add-image" id="add-more-btn" title="Add image" style="display:none" role="button" tabindex="0">+ Add Image</div>
+        <div class="btn btn-add-image" id="add-more-btn" title="Add one image" style="display:none" role="button" tabindex="0">+ Add Image</div>
+        <label for="id_multi_image_upload" class="btn btn-add-image" id="add-multi-btn" title="Add multiple images" style="display:none">
+          <input type="file" id="id_multi_image_upload" accept="image/*" multiple style="display:none">
+          + Add Multiple
+        </label>
       </div>
     </div>
     <div class="property-images-table-wrap">
@@ -202,11 +217,16 @@
     return tbody.querySelectorAll('tr.image-row');
   }
 
+  var addMultiBtn = document.getElementById('add-multi-btn');
+  var multiInput = document.getElementById('id_multi_image_upload');
+
   function toggleUI() {
     var rows = getDisplayRows();
     if (emptyRow) emptyRow.style.display = rows.length ? 'none' : 'table-row';
     if (addFirstBtn) addFirstBtn.style.display = rows.length ? 'none' : 'inline-flex';
-    if (addMoreBtn) addMoreBtn.style.display = rows.length ? 'inline-flex' : 'none';
+    var showAddMore = rows.length > 0;
+    if (addMoreBtn) addMoreBtn.style.display = showAddMore ? 'inline-flex' : 'none';
+    if (addMultiBtn) addMultiBtn.style.display = showAddMore ? 'inline-flex' : 'none';
   }
 
   function addDisplayRowFromMain(src) {
@@ -275,6 +295,30 @@
   if (addMoreBtn) {
     addMoreBtn.addEventListener('click', showInlineAddRow);
     addMoreBtn.addEventListener('keydown', function(e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); showInlineAddRow(); } });
+  }
+
+  if (multiInput) {
+    multiInput.addEventListener('change', function(e) {
+      var files = e.target.files;
+      if (!files || !files.length) return;
+      for (var i = 0; i < files.length; i++) {
+        (function(file) {
+          var fileInput = document.createElement('input');
+          fileInput.type = 'file';
+          fileInput.accept = 'image/*';
+          fileInput.style.cssText = 'position:absolute;clip:rect(0,0,0,0);width:1px;height:1px;margin:-1px;overflow:hidden;';
+          var dt = new DataTransfer();
+          dt.items.add(file);
+          fileInput.files = dt.files;
+          var reader = new FileReader();
+          reader.onload = function() {
+            addDisplayRowFromFile(reader.result, fileInput);
+          };
+          reader.readAsDataURL(file);
+        })(files[i]);
+      }
+      e.target.value = '';
+    });
   }
 
   function showInlineAddRow() {

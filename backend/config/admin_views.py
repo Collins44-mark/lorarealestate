@@ -171,7 +171,7 @@ def property_list(request):
 
 @staff_required
 def property_add(request):
-    form = PropertyForm(request.POST or None, request.FILES or None)
+    form = PropertyForm(request.POST or None, request.FILES or None, initial={"published": True})
     if request.method == "POST" and form.is_valid():
         prop = form.save()
         main_image_file = form.cleaned_data.get("main_image_upload")
@@ -185,13 +185,15 @@ def property_add(request):
                 video_file=video_file,
             )
         except ValueError as e:
-            form.add_error(None, str(e))
-        else:
-            return redirect(reverse("lora_admin:property_detail", args=[prop.pk]))
+            from django.contrib import messages
+            messages.warning(request, f"Property saved, but media upload failed: {e}")
+        return redirect(reverse("lora_admin:property_detail", args=[prop.pk]))
+    from locations.models import Location
+    has_locations = Location.objects.exists()
     return render(
         request,
         "lora_admin/property_form.html",
-        {"form": form, "page_title": "Add Property", "property": None},
+        {"form": form, "page_title": "Add Property", "property": None, "has_locations": has_locations},
     )
 
 
@@ -239,7 +241,7 @@ def property_edit(request, pk):
                 upload_property_media(prop, main_image_file=main_image_file)
             except ValueError as e:
                 form.add_error(None, str(e))
-                return render(request, "lora_admin/property_form.html", {"form": form, "page_title": "Edit Property", "property": prop})
+                return render(request, "lora_admin/property_form.html", {"form": form, "page_title": "Edit Property", "property": prop, "has_locations": True})
 
         if gallery_files:
             try:
@@ -250,14 +252,14 @@ def property_edit(request, pk):
                 )
             except ValueError as e:
                 form.add_error(None, str(e))
-                return render(request, "lora_admin/property_form.html", {"form": form, "page_title": "Edit Property", "property": prop})
+                return render(request, "lora_admin/property_form.html", {"form": form, "page_title": "Edit Property", "property": prop, "has_locations": True})
 
         if video_file:
             try:
                 upload_property_media(prop, video_file=video_file)
             except ValueError as e:
                 form.add_error(None, str(e))
-                return render(request, "lora_admin/property_form.html", {"form": form, "page_title": "Edit Property", "property": prop})
+                return render(request, "lora_admin/property_form.html", {"form": form, "page_title": "Edit Property", "property": prop, "has_locations": True})
 
         for key, val in post.items():
             if key.startswith("gallery_order_") and key != "gallery_order_main":
@@ -285,7 +287,7 @@ def property_edit(request, pk):
     return render(
         request,
         "lora_admin/property_form.html",
-        {"form": form, "page_title": "Edit Property", "property": prop},
+        {"form": form, "page_title": "Edit Property", "property": prop, "has_locations": True},
     )
 
 

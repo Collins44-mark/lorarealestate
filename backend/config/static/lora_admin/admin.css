@@ -681,6 +681,12 @@ body.lora-admin {
   margin: 0 0 1rem;
 }
 
+.form-hint-inline {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  font-weight: normal;
+}
+
 .form-errors {
   background: rgba(192, 57, 43, 0.1);
   color: var(--danger);
