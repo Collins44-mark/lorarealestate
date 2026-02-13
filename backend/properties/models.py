@@ -13,6 +13,11 @@ class Property(models.Model):
         SALE = "sale", "For Sale"
         RENT = "rent", "For Rent"
 
+    class Availability(models.TextChoices):
+        AVAILABLE = "available", "Available"
+        OCCUPIED = "occupied", "Occupied"
+        BOOKED = "booked", "Booked"
+
     title = models.CharField(max_length=255)
     description = models.TextField()
 
@@ -30,6 +35,11 @@ class Property(models.Model):
 
     featured = models.BooleanField(default=False)
     published = models.BooleanField(default=False)
+    availability = models.CharField(
+        max_length=20,
+        choices=Availability.choices,
+        default=Availability.AVAILABLE,
+    )
 
     # Media URLs only (stored from Cloudinary secure_url)
     main_image = models.URLField(max_length=1000, blank=True)

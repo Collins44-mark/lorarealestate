@@ -109,6 +109,11 @@
         <label>{{ form.published }} Publish <span class="form-hint-inline">(shows on website)</span></label>
       </div>
     </div>
+    <div class="form-group">
+      <label for="id_availability">Availability</label>
+      {{ form.availability }}
+      <span class="form-hint-inline">Available = customers can book. Occupied/Booked = show as Occupied, no actions on website.</span>
+    </div>
   </section>
 
   <section class="property-images-card">

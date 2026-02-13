@@ -67,6 +67,7 @@ class PropertyForm(ModelForm):
             "area_size",
             "featured",
             "published",
+            "availability",
         ]
         widgets = {
             "listing_type": forms.Select(attrs={"class": "form-input form-select"}),
@@ -81,6 +82,7 @@ class PropertyForm(ModelForm):
             "bedrooms": TextInput(attrs={"class": "form-input", "placeholder": "0"}),
             "bathrooms": TextInput(attrs={"class": "form-input", "placeholder": "0"}),
             "area_size": TextInput(attrs={"class": "form-input", "placeholder": "0"}),
+            "availability": forms.Select(attrs={"class": "form-input form-select"}),
         }
 
 

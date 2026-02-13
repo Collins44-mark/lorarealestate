@@ -84,7 +84,7 @@ class PropertyAdmin(admin.ModelAdmin):
         ("4. Details", {"fields": ("bedrooms", "bathrooms", "area_size")}),
         ("5. Images & video", {"fields": ("main_image", "video_url", "main_image_upload", "gallery_uploads", "video_upload")}),
         ("6. Contact", {"fields": ("contact_phone", "contact_whatsapp")}),
-        ("7. Visibility", {"fields": ("featured", "published")}),
+        ("7. Visibility", {"fields": ("featured", "published", "availability")}),
     )
 
     readonly_fields = ("main_image", "video_url")

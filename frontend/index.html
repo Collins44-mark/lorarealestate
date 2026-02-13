@@ -65,6 +65,14 @@
         </select>
       </div>
       <div class="filter-group">
+        <label for="availability">Availability</label>
+        <select name="availability" id="availability">
+          <option value="">All</option>
+          <option value="available">Available only</option>
+          <option value="occupied">Occupied only</option>
+        </select>
+      </div>
+      <div class="filter-group">
         <label for="minPrice">Price Range (TZS)</label>
         <div class="price-row">
           <input type="number" name="minPrice" id="minPrice" placeholder="Min amount" min="0" step="100000" inputmode="numeric">

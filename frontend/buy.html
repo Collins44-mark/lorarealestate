@@ -36,6 +36,24 @@
     </div>
   </section>
 
+  <!-- Filters -->
+  <div class="filter-bar container">
+    <form id="buyFilterForm" class="filter-form filter-form-inline">
+      <div class="filter-group">
+        <label for="availability">Availability</label>
+        <select name="availability" id="availability">
+          <option value="">All</option>
+          <option value="available">Available only</option>
+          <option value="occupied">Occupied only</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label>&nbsp;</label>
+        <button type="submit" class="btn btn-sm btn-outline">Apply</button>
+      </div>
+    </form>
+  </div>
+
   <!-- Property Grid -->
   <section class="section section-white">
     <div class="container">
@@ -90,16 +108,29 @@
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       const params = new URLSearchParams(window.location.search);
+      const availabilityEl = document.getElementById('availability');
+      if (availabilityEl) availabilityEl.value = params.get('availability') || '';
+
+      document.getElementById('buyFilterForm')?.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const av = availabilityEl?.value?.trim() || '';
+        const url = new URL(window.location.href);
+        if (av) url.searchParams.set('availability', av); else url.searchParams.delete('availability');
+        window.location.search = url.searchParams.toString();
+      });
+
       (async () => {
         try {
           const location = (params.get('location') || '').trim();
           const min_price = (params.get('min_price') || '').trim();
           const max_price = (params.get('max_price') || '').trim();
+          const availability = (params.get('availability') || '').trim();
           const items = await fetchProperties({
             listing_type: 'sale',
             location: location || undefined,
             min_price: min_price || undefined,
-            max_price: max_price || undefined
+            max_price: max_price || undefined,
+            availability: availability || undefined
           });
           renderPropertyGrid('buyProperties', items);
         } catch (e) {

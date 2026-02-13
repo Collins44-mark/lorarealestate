@@ -10,10 +10,19 @@ class PropertyFilter(django_filters.FilterSet):
     location = django_filters.CharFilter(method="filter_location")
     min_price = django_filters.NumberFilter(field_name="price", lookup_expr="gte")
     max_price = django_filters.NumberFilter(field_name="price", lookup_expr="lte")
+    availability = django_filters.CharFilter(method="filter_availability")
+
+    def filter_availability(self, qs, name, value):
+        v = (value or "").strip().lower()
+        if v == "available":
+            return qs.filter(availability="available")
+        if v == "occupied":
+            return qs.filter(availability__in=["occupied", "booked"])
+        return qs
 
     class Meta:
         model = Property
-        fields = ("listing_type", "featured", "property_type", "location", "min_price", "max_price")
+        fields = ("listing_type", "featured", "property_type", "location", "min_price", "max_price", "availability")
 
     def filter_location(self, qs, name, value):
         v = (value or "").strip()

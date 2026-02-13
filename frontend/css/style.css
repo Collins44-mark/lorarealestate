@@ -494,6 +494,21 @@ p {
   color: white;
 }
 
+.badge-occupied {
+  background: rgba(128, 128, 128, 0.9);
+  color: white;
+}
+
+.property-card-image .badge-occupied {
+  left: auto;
+  right: 1rem;
+}
+
+.property-detail-title .property-badge {
+  position: static;
+  margin-right: 0.5rem;
+}
+
 .property-card-body {
   padding: clamp(1rem, 3vw, 1.5rem);
   flex: 1;
@@ -1049,6 +1064,24 @@ p {
 
 .modal-close:hover {
   color: var(--text-dark);
+}
+
+.property-occupied-msg {
+  margin: 0;
+  padding: 1rem 1.25rem;
+  background: rgba(128, 128, 128, 0.12);
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+}
+
+.filter-bar {
+  padding: 1rem 0;
+}
+
+.filter-form-inline {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-end;
 }
 
 .modal-content h3 {

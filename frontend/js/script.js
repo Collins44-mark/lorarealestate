@@ -143,6 +143,7 @@ function createPropertyCard(property) {
     : `${formatPrice(property.price)}/month`;
   const badgeClass = property.listing_type === 'sale' ? 'badge-sale' : 'badge-rent';
   const badgeText = property.listing_type === 'sale' ? 'For Sale' : 'For Rent';
+  const isOccupied = property.availability === 'occupied' || property.availability === 'booked';
   const features = property.bedrooms && property.area_size
     ? `<div class="property-features">
          <span>${property.bedrooms} Beds</span>
@@ -160,6 +161,7 @@ function createPropertyCard(property) {
       <div class="property-card-image">
         ${imageHtml}
         <span class="property-badge ${badgeClass}">${badgeText}</span>
+        ${isOccupied ? '<span class="property-badge badge-occupied">Occupied</span>' : ''}
       </div>
       <div class="property-card-body">
         <div class="property-price">${price}</div>
@@ -212,9 +214,11 @@ function initQuickFilter() {
     const page = type === 'rent' ? 'rent.html' : 'buy.html';
     const params = new URLSearchParams();
     const location = form.querySelector('[name="location"]')?.value;
+    const availability = form.querySelector('[name="availability"]')?.value;
     const minPrice = form.querySelector('[name="minPrice"]')?.value;
     const maxPrice = form.querySelector('[name="maxPrice"]')?.value;
     if (location) params.set('location', location);
+    if (availability) params.set('availability', availability);
     if (minPrice) params.set('min_price', minPrice);
     if (maxPrice) params.set('max_price', maxPrice);
     window.location.href = page + (params.toString() ? '?' + params.toString() : '');
