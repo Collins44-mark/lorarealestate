@@ -14,6 +14,7 @@ from django.views import View
 from django.views.generic import CreateView, DeleteView, DetailView, ListView, UpdateView
 
 from bookings.models import Booking
+from inquiries.models import Inquiry
 from locations.models import Location
 
 
@@ -333,4 +334,32 @@ def bookings_list(request):
         request,
         "lora_admin/bookings.html",
         {"bookings": bookings, "page_title": "Bookings"},
+    )
+
+
+@staff_required
+def inquiries_list(request):
+    inquiries = Inquiry.objects.select_related("property").order_by("-created_at")[:50]
+    return render(
+        request,
+        "lora_admin/inquiries.html",
+        {"inquiries": inquiries, "page_title": "Inquiries"},
+    )
+
+
+@staff_required
+def booking_detail(request, pk):
+    booking = get_object_or_404(Booking.objects.select_related("property"), pk=pk)
+    if request.method == "POST" and request.POST.get("action") == "update_status":
+        new_status = request.POST.get("status", "").strip()
+        if new_status in dict(Booking.Status.choices):
+            booking.status = new_status
+            booking.save()
+            from django.contrib import messages
+            messages.success(request, f"Booking status updated to {new_status}.")
+            return redirect(reverse("lora_admin:booking_detail", args=[pk]))
+    return render(
+        request,
+        "lora_admin/booking_detail.html",
+        {"booking": booking, "page_title": f"Booking #{booking.id}"},
     )

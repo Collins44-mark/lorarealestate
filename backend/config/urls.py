@@ -10,8 +10,10 @@ from django.urls import include, path
 from config.admin_views import (
     admin_login,
     admin_logout,
+    booking_detail,
     bookings_list,
     dashboard,
+    inquiries_list,
     location_delete,
     location_edit,
     locations_list,
@@ -64,6 +66,8 @@ lora_admin_urls = ([
     path("locations/<int:pk>/edit/", location_edit, name="location_edit"),
     path("locations/<int:pk>/delete/", location_delete, name="location_delete"),
     path("bookings/", bookings_list, name="bookings"),
+    path("bookings/<int:pk>/", booking_detail, name="booking_detail"),
+    path("inquiries/", inquiries_list, name="inquiries"),
 ], "lora_admin")
 
 urlpatterns = [

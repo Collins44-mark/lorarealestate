@@ -1,0 +1,49 @@
+{% extends "lora_admin/base.html" %}
+{% load lora_admin_extras %}
+
+{% block content %}
+<div class="page-header">
+  <h1>Inquiries</h1>
+  <p class="page-subtitle">Messages from the contact form. Reach out to guests via phone or WhatsApp.</p>
+</div>
+
+<div class="table-container">
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Contact</th>
+        <th>Property</th>
+        <th>Message</th>
+        <th>Contact</th>
+        <th>Received</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for inv in inquiries %}
+      <tr>
+        <td>
+          <strong>{{ inv.full_name }}</strong><br>
+          <small>{{ inv.email }}</small>
+          {% if inv.phone %}<br><small>{{ inv.phone }}</small>{% endif %}
+        </td>
+        <td>{% if inv.property %}<a href="{% url 'lora_admin:property_detail' inv.property_id %}">{{ inv.property.title }}</a>{% else %}—{% endif %}</td>
+        <td><span class="inquiry-message-preview">{{ inv.message|truncatewords:15 }}</span></td>
+        <td class="booking-contact-actions">
+          {% if inv.phone %}
+          <a href="tel:{{ inv.phone }}" class="btn btn-sm btn-contact" title="Call">📞 Call</a>
+          <a href="https://wa.me/{{ inv.phone|phone_digits }}" class="btn btn-sm btn-whatsapp" target="_blank" rel="noopener" title="WhatsApp">WhatsApp</a>
+          {% else %}
+          <a href="mailto:{{ inv.email }}" class="btn btn-sm btn-contact" title="Email">✉️ Email</a>
+          {% endif %}
+        </td>
+        <td>{{ inv.created_at|date:"M d, Y" }}</td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="5" class="empty-cell">No inquiries yet. Contact form submissions will appear here.</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

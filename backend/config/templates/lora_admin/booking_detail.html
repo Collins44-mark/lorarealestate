@@ -1,0 +1,65 @@
+{% extends "lora_admin/base.html" %}
+{% load lora_admin_extras %}
+
+{% block content %}
+<div class="page-header">
+  <h1>Booking #{{ booking.id }}</h1>
+  <a href="{% url 'lora_admin:bookings' %}" class="btn btn-outline">← Back to Bookings</a>
+</div>
+
+<div class="booking-detail-card">
+  <div class="booking-detail-section">
+    <h3>Guest Details</h3>
+    <dl class="detail-list">
+      <dt>Name</dt>
+      <dd>{{ booking.full_name }}</dd>
+      <dt>Email</dt>
+      <dd><a href="mailto:{{ booking.email }}">{{ booking.email }}</a></dd>
+      {% if booking.phone %}
+      <dt>Phone</dt>
+      <dd>
+        <a href="tel:{{ booking.phone }}">{{ booking.phone }}</a>
+        <span class="contact-actions-inline">
+          <a href="tel:{{ booking.phone }}" class="btn btn-sm btn-contact" title="Call">📞 Call</a>
+          <a href="https://wa.me/{{ booking.phone|phone_digits }}" class="btn btn-sm btn-whatsapp" target="_blank" rel="noopener" title="WhatsApp">WhatsApp</a>
+        </span>
+      </dd>
+      {% endif %}
+    </dl>
+  </div>
+
+  <div class="booking-detail-section">
+    <h3>Visit Request</h3>
+    <dl class="detail-list">
+      <dt>Property</dt>
+      <dd><a href="{% url 'lora_admin:property_detail' booking.property_id %}">{{ booking.property.title }}</a></dd>
+      <dt>Preferred Date</dt>
+      <dd>{{ booking.preferred_date }}</dd>
+      <dt>Preferred Time</dt>
+      <dd>{{ booking.preferred_time }}</dd>
+      {% if booking.message %}
+      <dt>Message</dt>
+      <dd class="booking-message">{{ booking.message }}</dd>
+      {% endif %}
+    </dl>
+  </div>
+
+  <div class="booking-detail-section">
+    <h3>Status</h3>
+    <form method="post" class="booking-status-form">
+      {% csrf_token %}
+      <input type="hidden" name="action" value="update_status">
+      <div class="form-row form-row-inline">
+        <select name="status" class="form-input form-select">
+          {% for val, label in booking.Status.choices %}
+          <option value="{{ val }}" {% if booking.status == val %}selected{% endif %}>{{ label }}</option>
+          {% endfor %}
+        </select>
+        <button type="submit" class="btn btn-primary">Update Status</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<p class="booking-meta"><small>Submitted {{ booking.created_at|date:"F d, Y \a\t H:i" }}</small></p>
+{% endblock %}

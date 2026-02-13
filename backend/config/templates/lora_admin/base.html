@@ -19,6 +19,7 @@
       <a href="{% url 'lora_admin:property_add' %}" class="nav-item{% if '/admin/properties/add/' in request.path %} active{% endif %}">Add Property</a>
       <a href="{% url 'lora_admin:locations' %}" class="nav-item{% if '/admin/locations/' in request.path %} active{% endif %}">Locations</a>
       <a href="{% url 'lora_admin:bookings' %}" class="nav-item{% if '/admin/bookings/' in request.path %} active{% endif %}">Bookings</a>
+      <a href="{% url 'lora_admin:inquiries' %}" class="nav-item{% if '/admin/inquiries/' in request.path %} active{% endif %}">Inquiries</a>
       <form method="post" action="{% url 'lora_admin:logout' %}" class="nav-logout-form">
         {% csrf_token %}
         <button type="submit" class="nav-item nav-logout">Logout</button>
