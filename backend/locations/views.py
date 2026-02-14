@@ -9,3 +9,4 @@ class LocationViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     queryset = Location.objects.all()
     serializer_class = LocationSerializer
     permission_classes = (AllowAny,)
+    pagination_class = None  # Return all locations for filter dropdowns

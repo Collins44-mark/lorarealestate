@@ -202,11 +202,41 @@ async function fetchProperties(params) {
 }
 
 /**
+ * Fetch locations from backend API (admin-added only)
+ */
+async function fetchLocations() {
+  const data = await apiGet('/api/locations/', {});
+  return Array.isArray(data) ? data : (data.results || []);
+}
+
+/**
+ * Populate location select with admin-added locations
+ */
+async function populateLocationSelect() {
+  const select = document.getElementById('location');
+  if (!select) return;
+  try {
+    const locations = await fetchLocations();
+    locations.forEach((loc) => {
+      const display = loc.city ? `${loc.name}, ${loc.city}` : loc.name;
+      const opt = document.createElement('option');
+      opt.value = loc.name;
+      opt.textContent = display;
+      select.appendChild(opt);
+    });
+  } catch (e) {
+    console.error('Could not load locations:', e);
+  }
+}
+
+/**
  * Initialize quick filter form (home page)
  */
 function initQuickFilter() {
   const form = document.getElementById('quickFilterForm');
   if (!form) return;
+
+  populateLocationSelect();
 
   form.addEventListener('submit', (e) => {
     e.preventDefault();

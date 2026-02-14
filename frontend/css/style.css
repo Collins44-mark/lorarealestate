@@ -1025,6 +1025,15 @@ p {
   gap: 1rem;
 }
 
+/* Prevent date/time inputs from overflowing on tablet and mobile */
+.book-visit-form input[type="date"],
+.book-visit-form input[type="time"] {
+  max-width: 100%;
+  width: 100%;
+  box-sizing: border-box;
+  min-width: 0;
+}
+
 .book-visit-form .form-group {
   margin-bottom: 1.25rem;
 }
@@ -1825,6 +1834,17 @@ p {
 
   .modal-book-visit {
     max-width: 100%;
+  }
+}
+
+/* Tablet: stack date/time in book visit form to prevent overflow */
+@media (max-width: 768px) {
+  .book-visit-form .form-row-date-time {
+    grid-template-columns: 1fr !important;
+  }
+  .modal-overlay.open .modal-content {
+    max-height: 90vh;
+    overflow-y: auto;
   }
 }
 
