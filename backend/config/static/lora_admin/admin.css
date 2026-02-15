@@ -1193,15 +1193,29 @@ body.lora-admin {
   color: var(--gold);
 }
 
+.status-cell {
+  white-space: nowrap;
+}
+
+.status-cell .badge {
+  margin-right: 0.5rem;
+  vertical-align: middle;
+}
+
 .status-select-form {
   display: inline-block;
   margin: 0;
+  vertical-align: middle;
 }
 
 .status-select-form .status-select {
-  min-width: 100px;
-  padding: 0.35rem 0.6rem;
+  min-width: 110px;
+  padding: 0.4rem 0.75rem;
   font-size: 0.85rem;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--card-bg);
 }
 
 /* Confirm delete */
