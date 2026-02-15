@@ -68,13 +68,11 @@
         <label for="id_location_name">Location</label>
         {{ form.location_name }}
         {{ form.location_name.errors }}
-        <span class="form-hint-inline">Area or neighborhood (e.g. Oyster Bay, Masaki)</span>
       </div>
       <div class="form-group">
         <label for="id_location_city">City</label>
         {{ form.location_city }}
         {{ form.location_city.errors }}
-        <span class="form-hint-inline">Defaults to Dar es Salaam if blank</span>
       </div>
     </div>
     <div class="form-row">
@@ -116,7 +114,6 @@
     <div class="form-group">
       <label for="id_availability">Availability</label>
       {{ form.availability }}
-      <span class="form-hint-inline">Available = customers can book. Occupied/Booked = show as Occupied, no actions on website.</span>
     </div>
   </section>
 
