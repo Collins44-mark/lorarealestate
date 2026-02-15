@@ -45,9 +45,12 @@
           <a href="{% url 'lora_admin:property_detail' b.property_id %}">{{ b.property.title }}</a>
         </td>
         <td>{{ b.preferred_date }}<br><small>{{ b.preferred_time }}</small></td>
-        <td>
-          <div class="dropdown-wrap">
-            <button type="button" class="btn-dots-minimal" aria-label="Status actions">&#8942;</button>
+        <td class="status-cell">
+          <div class="status-badges">
+            <span class="badge badge-{{ b.status }}">{{ b.get_status_display }}</span>
+          </div>
+          <div class="dropdown-wrap status-dropdown">
+            <button type="button" class="btn-status-toggle" aria-label="Change status">▼</button>
             <div class="dropdown-menu">
               {% for val, label in status_choices %}
               <form method="post" action="{% url 'lora_admin:booking_update_status' b.pk %}{% if status_filter %}?status={{ status_filter }}{% endif %}" class="status-menu-form">
