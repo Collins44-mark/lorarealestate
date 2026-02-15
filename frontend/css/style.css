@@ -450,10 +450,12 @@ p {
 }
 
 .filter-form .filter-group:last-child {
+  grid-column: 1 / -1;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-end;
+  margin-top: 0.5rem;
 }
 
 /* ============================================
