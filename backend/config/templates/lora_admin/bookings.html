@@ -8,19 +8,15 @@
 </div>
 
 <div class="filter-bar bookings-filter">
-  <form method="get" class="filter-form filter-form-inline">
+  <form method="get" class="filter-form filter-form-inline" id="bookingsFilterForm">
     <div class="filter-group">
       <label for="status">Status</label>
-      <select name="status" id="status" class="form-input form-select">
+      <select name="status" id="status" class="form-input form-select" onchange="this.form.submit()">
         <option value="">All</option>
         {% for val, label in status_choices %}
         <option value="{{ val }}" {% if status_filter == val %}selected{% endif %}>{{ label }}</option>
         {% endfor %}
       </select>
-    </div>
-    <div class="filter-group">
-      <label>&nbsp;</label>
-      <button type="submit" class="btn btn-primary">Filter</button>
     </div>
   </form>
 </div>
