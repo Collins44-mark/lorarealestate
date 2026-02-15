@@ -563,6 +563,29 @@ body.lora-admin {
   color: var(--danger);
 }
 
+.status-menu-form {
+  margin: 0;
+  border: none;
+}
+
+.dropdown-item-btn {
+  display: block;
+  width: 100%;
+  padding: 0.6rem 1rem;
+  color: var(--text-primary);
+  text-decoration: none;
+  font-size: 0.9rem;
+  text-align: left;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.dropdown-item-btn:hover {
+  background: var(--main-bg);
+}
+
 /* Action buttons (Locations) */
 .action-btns {
   display: flex;
@@ -1202,20 +1225,9 @@ body.lora-admin {
   vertical-align: middle;
 }
 
-.status-select-form {
-  display: inline-block;
-  margin: 0;
+.status-cell .status-dropdown {
+  margin-left: 0.5rem;
   vertical-align: middle;
-}
-
-.status-select-form .status-select {
-  min-width: 110px;
-  padding: 0.4rem 0.75rem;
-  font-size: 0.85rem;
-  cursor: pointer;
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  background: var(--card-bg);
 }
 
 /* Confirm delete */

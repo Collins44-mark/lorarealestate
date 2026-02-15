@@ -32,13 +32,26 @@
         <td>{{ p.location.name }}, {{ p.location.city }}</td>
         <td class="status-cell">
           {% if p.featured %}<span class="badge badge-featured">Featured</span>{% endif %}
-          <form method="post" action="{% url 'lora_admin:property_update_status' p.pk %}{% if request.GET %}?{{ request.GET.urlencode }}{% endif %}" class="status-select-form">
-            {% csrf_token %}
-            <select name="published" onchange="this.form.submit()" class="form-input form-select status-select" title="Change visibility">
-              <option value="1" {% if p.published %}selected{% endif %}>Published</option>
-              <option value="0" {% if not p.published %}selected{% endif %}>Draft</option>
-            </select>
-          </form>
+          {% if p.published %}<span class="badge badge-published">Published</span>{% else %}<span class="badge badge-draft">Draft</span>{% endif %}
+          <div class="dropdown-wrap status-dropdown">
+            <button type="button" class="btn-dots-minimal" aria-label="Status actions">&#8942;</button>
+            <div class="dropdown-menu">
+              <form method="post" action="{% url 'lora_admin:property_toggle_status' p.pk %}{% if request.GET %}?{{ request.GET.urlencode }}{% endif %}" class="status-menu-form">
+                {% csrf_token %}
+                <input type="hidden" name="field" value="featured">
+                <button type="submit" class="dropdown-item-btn">
+                  Featured{% if p.featured %} ✓{% endif %}
+                </button>
+              </form>
+              <form method="post" action="{% url 'lora_admin:property_toggle_status' p.pk %}{% if request.GET %}?{{ request.GET.urlencode }}{% endif %}" class="status-menu-form">
+                {% csrf_token %}
+                <input type="hidden" name="field" value="published">
+                <button type="submit" class="dropdown-item-btn">
+                  Publish{% if p.published %} ✓{% endif %}
+                </button>
+              </form>
+            </div>
+          </div>
         </td>
         <td>
           <div class="dropdown-wrap">

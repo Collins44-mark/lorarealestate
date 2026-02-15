@@ -22,7 +22,7 @@ from config.admin_views import (
     property_detail,
     property_edit,
     property_list,
-    property_update_status,
+    property_toggle_status,
 )
 from rest_framework.routers import DefaultRouter
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
@@ -60,7 +60,7 @@ lora_admin_urls = ([
     path("logout/", admin_logout, name="logout"),
     path("properties/", property_list, name="property_list"),
     path("properties/add/", property_add, name="property_add"),
-    path("properties/<int:pk>/status/", property_update_status, name="property_update_status"),
+    path("properties/<int:pk>/toggle-status/", property_toggle_status, name="property_toggle_status"),
     path("properties/<int:pk>/edit/", property_edit, name="property_edit"),
     path("properties/<int:pk>/delete/", property_delete, name="property_delete"),
     path("properties/<int:pk>/", property_detail, name="property_detail"),

@@ -284,22 +284,30 @@ def property_edit(request, pk):
     )
 
 
+def _property_list_redirect(request):
+    base = reverse("lora_admin:property_list")
+    qs = request.GET.urlencode()
+    return redirect(base + ("?" + qs if qs else ""))
+
+
 @staff_required
-def property_update_status(request, pk):
-    """Update published status from property list view."""
+def property_toggle_status(request, pk):
+    """Toggle featured or published from property list dropdown."""
     prop = get_object_or_404(Property, pk=pk)
-    if request.method == "POST":
-        published_val = request.POST.get("published", "")
-        if published_val == "1":
-            prop.published = True
-        elif published_val == "0":
-            prop.published = False
-        else:
-            return redirect(reverse("lora_admin:property_list") + ("?" + request.GET.urlencode() if request.GET else ""))
+    if request.method != "POST":
+        return _property_list_redirect(request)
+    field = request.POST.get("field", "").strip()
+    if field == "featured":
+        prop.featured = not prop.featured
         prop.save()
-        messages.success(request, f'"{prop.title}" is now {"published" if prop.published else "draft"}.')
-        return redirect(reverse("lora_admin:property_list") + ("?" + request.GET.urlencode() if request.GET else ""))
-    return redirect("lora_admin:property_list")
+        status = "featured" if prop.featured else "removed from featured"
+        messages.success(request, f'"{prop.title}" is now {status}.')
+    elif field == "published":
+        prop.published = not prop.published
+        prop.save()
+        status = "published" if prop.published else "draft"
+        messages.success(request, f'"{prop.title}" is now {status}.')
+    return _property_list_redirect(request)
 
 
 @staff_required
