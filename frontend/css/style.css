@@ -1035,6 +1035,8 @@ p {
   opacity: 0;
   visibility: hidden;
   transition: opacity 0.3s ease, visibility 0.3s ease;
+  -webkit-overflow-scrolling: touch;
+  overflow-y: auto;
 }
 
 .modal-overlay.open {
@@ -1051,6 +1053,7 @@ p {
   position: relative;
   transform: scale(0.95);
   transition: transform 0.3s ease;
+  touch-action: pan-y;
 }
 
 .modal-book-visit {
@@ -1090,6 +1093,13 @@ p {
 
 .book-visit-form .form-group {
   margin-bottom: 1.25rem;
+}
+
+/* Prevent zoom/movement on mobile when focusing inputs (iOS) */
+.book-visit-form input,
+.book-visit-form textarea {
+  font-size: 16px;
+  touch-action: manipulation;
 }
 
 .book-visit-form label .required { color: #c0392b; }
@@ -1906,6 +1916,20 @@ p {
   .modal-overlay.open .modal-content {
     max-height: 90vh;
     overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* Mobile: keep form static when filling - prevent zoom and scroll bounce */
+@media (max-width: 768px) {
+  .modal-overlay {
+    align-items: flex-start;
+    padding: 1.5rem 1rem 2rem;
+    overscroll-behavior: contain;
+  }
+  .modal-overlay.open .modal-content {
+    margin: auto 0;
+    flex-shrink: 0;
   }
 }
 
