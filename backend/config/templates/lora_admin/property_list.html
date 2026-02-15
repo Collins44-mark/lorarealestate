@@ -32,7 +32,13 @@
         <td>{{ p.location.name }}, {{ p.location.city }}</td>
         <td>
           {% if p.featured %}<span class="badge badge-featured">Featured</span>{% endif %}
-          {% if p.published %}<span class="badge badge-published">Published</span>{% else %}<span class="badge badge-draft">Draft</span>{% endif %}
+          <form method="post" action="{% url 'lora_admin:property_update_status' p.pk %}{% if request.GET %}?{{ request.GET.urlencode }}{% endif %}" class="status-select-form">
+            {% csrf_token %}
+            <select name="published" onchange="this.form.submit()" class="form-input form-select status-select">
+              <option value="1" {% if p.published %}selected{% endif %}>Published</option>
+              <option value="0" {% if not p.published %}selected{% endif %}>Draft</option>
+            </select>
+          </form>
         </td>
         <td>
           <div class="dropdown-wrap">

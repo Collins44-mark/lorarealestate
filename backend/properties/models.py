@@ -34,7 +34,7 @@ class Property(models.Model):
     area_size = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
 
     featured = models.BooleanField(default=False)
-    published = models.BooleanField(default=False)
+    published = models.BooleanField(default=True)
     availability = models.CharField(
         max_length=20,
         choices=Availability.choices,

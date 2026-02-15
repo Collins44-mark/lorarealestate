@@ -60,7 +60,7 @@
     <div class="form-row">
       <div class="form-group">
         <label for="id_price">Price</label>
-        {{ form.price }}
+        <input type="text" id="id_price" name="price" class="form-input price-input" placeholder="0" value="{% if form.price.value %}{{ form.price.value|floatformat:0 }}{% endif %}"{% if form.price.errors %} aria-invalid="true"{% endif %}>
         {{ form.price.errors }}
       </div>
       <div class="form-group">
@@ -306,6 +306,35 @@
   });
 
   toggleUI();
+})();
+
+(function() {
+  var priceInput = document.getElementById('id_price');
+  if (!priceInput) return;
+  function formatPrice(val) {
+    var nums = val.replace(/\D/g, '');
+    if (!nums) return '';
+    return nums.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  }
+  priceInput.addEventListener('input', function() {
+    var pos = this.selectionStart;
+    var oldLen = this.value.length;
+    this.value = formatPrice(this.value);
+    var newLen = this.value.length;
+    this.setSelectionRange(pos + (newLen - oldLen), pos + (newLen - oldLen));
+  });
+  priceInput.addEventListener('focus', function() {
+    if (this.value && !this.dataset.formatted) {
+      this.value = formatPrice(this.value);
+      this.dataset.formatted = '1';
+    }
+  });
+  if (priceInput.value) {
+    priceInput.value = formatPrice(priceInput.value);
+  }
+  document.querySelector('form.property-form').addEventListener('submit', function() {
+    priceInput.value = priceInput.value.replace(/\D/g, '');
+  });
 })();
 </script>
 {% endblock %}

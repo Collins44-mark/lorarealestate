@@ -9,6 +9,7 @@ from django.forms import ModelForm, Textarea, TextInput
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
+from django.contrib import messages
 from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.generic import CreateView, DeleteView, DetailView, ListView, UpdateView
@@ -281,6 +282,24 @@ def property_edit(request, pk):
         "lora_admin/property_form.html",
         {"form": form, "page_title": "Edit Property", "property": prop, "has_locations": True},
     )
+
+
+@staff_required
+def property_update_status(request, pk):
+    """Update published status from property list view."""
+    prop = get_object_or_404(Property, pk=pk)
+    if request.method == "POST":
+        published_val = request.POST.get("published", "")
+        if published_val == "1":
+            prop.published = True
+        elif published_val == "0":
+            prop.published = False
+        else:
+            return redirect(reverse("lora_admin:property_list") + ("?" + request.GET.urlencode() if request.GET else ""))
+        prop.save()
+        messages.success(request, f'"{prop.title}" is now {"published" if prop.published else "draft"}.')
+        return redirect(reverse("lora_admin:property_list") + ("?" + request.GET.urlencode() if request.GET else ""))
+    return redirect("lora_admin:property_list")
 
 
 @staff_required

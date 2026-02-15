@@ -22,6 +22,7 @@ from config.admin_views import (
     property_detail,
     property_edit,
     property_list,
+    property_update_status,
 )
 from rest_framework.routers import DefaultRouter
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
@@ -61,6 +62,7 @@ lora_admin_urls = ([
     path("properties/add/", property_add, name="property_add"),
     path("properties/<int:pk>/", property_detail, name="property_detail"),
     path("properties/<int:pk>/edit/", property_edit, name="property_edit"),
+    path("properties/<int:pk>/status/", property_update_status, name="property_update_status"),
     path("properties/<int:pk>/delete/", property_delete, name="property_delete"),
     path("locations/", locations_list, name="locations"),
     path("locations/<int:pk>/edit/", location_edit, name="location_edit"),
