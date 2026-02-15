@@ -245,7 +245,7 @@ p {
   color: white;
   text-align: center;
   padding: clamp(2.5rem, 8vw, 4rem) clamp(1rem, 4vw, 1.5rem);
-  min-height: clamp(320px, 50vh, 400px);
+  min-height: clamp(420px, 80vh, 95vh);
   display: flex;
   align-items: center;
   justify-content: center;
