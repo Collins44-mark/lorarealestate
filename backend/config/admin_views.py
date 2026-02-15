@@ -29,8 +29,23 @@ class LocationForm(ModelForm):
         }
 
 
+from locations.models import Location
 from properties.models import Property, PropertyImage
 from properties.services import delete_property_media, destroy_cloudinary_asset, upload_property_media
+
+
+def _get_or_create_location(name: str, city: str) -> Location:
+    """Get existing location or create new one. City defaults to Dar es Salaam."""
+    city = (city or "").strip() or "Dar es Salaam"
+    name = (name or "").strip()
+    if not name:
+        raise ValueError("Location name is required.")
+    loc, _ = Location.objects.get_or_create(
+        name=name,
+        city=city,
+        defaults={"name": name, "city": city},
+    )
+    return loc
 
 
 def staff_required(view_func):
@@ -50,6 +65,18 @@ def staff_required(view_func):
 class PropertyForm(ModelForm):
     # main_image_upload, gallery_uploads, video_upload handled via request.FILES in view
     # (avoids "No file was submitted" validation errors with dynamic file inputs)
+    # location_name + location_city replace location - we get_or_create Location in the view
+    location_name = forms.CharField(
+        required=True,
+        max_length=120,
+        widget=TextInput(attrs={"class": "form-input", "placeholder": "e.g. Oyster Bay, Masaki"}),
+    )
+    location_city = forms.CharField(
+        required=False,
+        max_length=120,
+        initial="Dar es Salaam",
+        widget=TextInput(attrs={"class": "form-input", "placeholder": "Dar es Salaam"}),
+    )
 
     class Meta:
         model = Property
@@ -60,7 +87,6 @@ class PropertyForm(ModelForm):
             "description",
             "price",
             "currency",
-            "location",
             "contact_phone",
             "contact_whatsapp",
             "bedrooms",
@@ -73,7 +99,6 @@ class PropertyForm(ModelForm):
         widgets = {
             "listing_type": forms.Select(attrs={"class": "form-input form-select"}),
             "property_type": forms.Select(attrs={"class": "form-input form-select"}),
-            "location": forms.Select(attrs={"class": "form-input form-select"}),
             "title": TextInput(attrs={"class": "form-input", "placeholder": "Property title"}),
             "description": Textarea(attrs={"class": "form-input", "rows": 5, "placeholder": "Full description"}),
             "price": TextInput(attrs={"class": "form-input", "placeholder": "0"}),
@@ -164,9 +189,27 @@ def property_list(request):
 
 @staff_required
 def property_add(request):
-    form = PropertyForm(request.POST or None, request.FILES or None, initial={"published": True})
+    form = PropertyForm(
+        request.POST or None,
+        request.FILES or None,
+        initial={"published": True, "location_city": "Dar es Salaam"},
+    )
     if request.method == "POST" and form.is_valid():
-        prop = form.save()
+        try:
+            loc = _get_or_create_location(
+                form.cleaned_data["location_name"],
+                form.cleaned_data.get("location_city") or "Dar es Salaam",
+            )
+        except ValueError as e:
+            form.add_error("location_name", str(e))
+            return render(
+                request,
+                "lora_admin/property_form.html",
+                {"form": form, "page_title": "Add Property", "property": None},
+            )
+        prop = form.save(commit=False)
+        prop.location = loc
+        prop.save()
         main_image_file = request.FILES.get("main_image_upload") if request.FILES else None
         video_file = request.FILES.get("video_upload") if request.FILES else None
         gallery_files = request.FILES.getlist("gallery_uploads") if request.FILES else []
@@ -178,15 +221,12 @@ def property_add(request):
                 video_file=video_file,
             )
         except ValueError as e:
-            from django.contrib import messages
             messages.warning(request, f"Property saved, but media upload failed: {e}")
         return redirect(reverse("lora_admin:property_detail", args=[prop.pk]))
-    from locations.models import Location
-    has_locations = Location.objects.exists()
     return render(
         request,
         "lora_admin/property_form.html",
-        {"form": form, "page_title": "Add Property", "property": None, "has_locations": has_locations},
+        {"form": form, "page_title": "Add Property", "property": None},
     )
 
 
@@ -203,9 +243,33 @@ def property_detail(request, pk):
 @staff_required
 def property_edit(request, pk):
     prop = get_object_or_404(Property, pk=pk)
-    form = PropertyForm(request.POST or None, request.FILES or None, instance=prop)
+    initial_location = (
+        {"location_name": prop.location.name, "location_city": prop.location.city}
+        if prop.location
+        else {"location_city": "Dar es Salaam"}
+    )
+    form = PropertyForm(
+        request.POST or None,
+        request.FILES or None,
+        instance=prop,
+        initial=initial_location,
+    )
     if request.method == "POST" and form.is_valid():
-        form.save()
+        try:
+            loc = _get_or_create_location(
+                form.cleaned_data["location_name"],
+                form.cleaned_data.get("location_city") or "Dar es Salaam",
+            )
+        except ValueError as e:
+            form.add_error("location_name", str(e))
+            return render(
+                request,
+                "lora_admin/property_form.html",
+                {"form": form, "page_title": "Edit Property", "property": prop},
+            )
+        form.save(commit=False)
+        prop.location = loc
+        prop.save()
         post = request.POST
         main_image_file = request.FILES.get("main_image_upload") if request.FILES else None
         video_file = request.FILES.get("video_upload") if request.FILES else None
@@ -234,7 +298,7 @@ def property_edit(request, pk):
                 upload_property_media(prop, main_image_file=main_image_file)
             except ValueError as e:
                 form.add_error(None, str(e))
-                return render(request, "lora_admin/property_form.html", {"form": form, "page_title": "Edit Property", "property": prop, "has_locations": True})
+                return render(request, "lora_admin/property_form.html", {"form": form, "page_title": "Edit Property", "property": prop})
 
         if gallery_files:
             try:
@@ -245,14 +309,14 @@ def property_edit(request, pk):
                 )
             except ValueError as e:
                 form.add_error(None, str(e))
-                return render(request, "lora_admin/property_form.html", {"form": form, "page_title": "Edit Property", "property": prop, "has_locations": True})
+                return render(request, "lora_admin/property_form.html", {"form": form, "page_title": "Edit Property", "property": prop})
 
         if video_file:
             try:
                 upload_property_media(prop, video_file=video_file)
             except ValueError as e:
                 form.add_error(None, str(e))
-                return render(request, "lora_admin/property_form.html", {"form": form, "page_title": "Edit Property", "property": prop, "has_locations": True})
+                return render(request, "lora_admin/property_form.html", {"form": form, "page_title": "Edit Property", "property": prop})
 
         for key, val in post.items():
             if key.startswith("gallery_order_") and key != "gallery_order_main":
@@ -280,7 +344,7 @@ def property_edit(request, pk):
     return render(
         request,
         "lora_admin/property_form.html",
-        {"form": form, "page_title": "Edit Property", "property": prop, "has_locations": True},
+        {"form": form, "page_title": "Edit Property", "property": prop},
     )
 
 

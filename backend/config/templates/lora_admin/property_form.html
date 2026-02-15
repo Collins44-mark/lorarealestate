@@ -50,11 +50,6 @@
     </div>
   </section>
 
-  {% if not has_locations %}
-  <div class="form-errors" role="alert">
-    <strong>Add a location first.</strong> <a href="{% url 'lora_admin:locations' %}">Go to Locations</a> to create one before adding properties.
-  </div>
-  {% endif %}
   <section class="form-section">
     <h3>3. Price & Location</h3>
     <div class="form-row">
@@ -68,10 +63,19 @@
         {{ form.currency }}
       </div>
     </div>
-    <div class="form-group">
-      <label for="id_location">Location</label>
-      {{ form.location }}
-      {{ form.location.errors }}
+    <div class="form-row">
+      <div class="form-group">
+        <label for="id_location_name">Location</label>
+        {{ form.location_name }}
+        {{ form.location_name.errors }}
+        <span class="form-hint-inline">Area or neighborhood (e.g. Oyster Bay, Masaki)</span>
+      </div>
+      <div class="form-group">
+        <label for="id_location_city">City</label>
+        {{ form.location_city }}
+        {{ form.location_city.errors }}
+        <span class="form-hint-inline">Defaults to Dar es Salaam if blank</span>
+      </div>
     </div>
     <div class="form-row">
       <div class="form-group">
