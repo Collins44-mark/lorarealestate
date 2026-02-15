@@ -453,6 +453,50 @@ def inquiries_list(request):
     )
 
 
+def _bookings_redirect(request):
+    base = reverse("lora_admin:bookings")
+    status = request.POST.get("next_status_filter") or request.GET.get("status", "")
+    return redirect(base + ("?status=" + status if status else ""))
+
+
+@staff_required
+def booking_update_status(request, pk):
+    """Update booking status from list view dropdown."""
+    booking = get_object_or_404(Booking, pk=pk)
+    if request.method == "POST":
+        new_status = request.POST.get("status", "").strip()
+        if new_status in dict(Booking.Status.choices):
+            booking.status = new_status
+            booking.save()
+            messages.success(request, f"Booking #{booking.id} status updated to {new_status}.")
+    return _bookings_redirect(request)
+
+
+@staff_required
+def booking_delete(request, pk):
+    booking = get_object_or_404(Booking.objects.select_related("property"), pk=pk)
+    if request.method == "POST":
+        booking.delete()
+        messages.success(request, "Booking deleted.")
+        status = request.GET.get("status", "")
+        return redirect(reverse("lora_admin:bookings") + ("?status=" + status if status else ""))
+    return render(
+        request,
+        "lora_admin/booking_confirm_delete.html",
+        {"booking": booking, "page_title": "Delete Booking", "status_filter": request.GET.get("status", "")},
+    )
+
+
+@staff_required
+def inquiry_delete(request, pk):
+    inquiry = get_object_or_404(Inquiry, pk=pk)
+    if request.method == "POST":
+        inquiry.delete()
+        messages.success(request, "Inquiry deleted.")
+        return redirect(reverse("lora_admin:inquiries"))
+    return render(request, "lora_admin/inquiry_confirm_delete.html", {"inquiry": inquiry, "page_title": "Delete Inquiry"})
+
+
 @staff_required
 def booking_detail(request, pk):
     booking = get_object_or_404(Booking.objects.select_related("property"), pk=pk)
@@ -461,7 +505,6 @@ def booking_detail(request, pk):
         if new_status in dict(Booking.Status.choices):
             booking.status = new_status
             booking.save()
-            from django.contrib import messages
             messages.success(request, f"Booking status updated to {new_status}.")
             return redirect(reverse("lora_admin:booking_detail", args=[pk]))
     return render(

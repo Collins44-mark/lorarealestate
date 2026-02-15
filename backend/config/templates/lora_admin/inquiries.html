@@ -16,6 +16,7 @@
         <th>Message</th>
         <th>Contact</th>
         <th>Received</th>
+        <th>Actions</th>
       </tr>
     </thead>
     <tbody>
@@ -37,10 +38,18 @@
           {% endif %}
         </td>
         <td>{{ inv.created_at|date:"M d, Y" }}</td>
+        <td>
+          <div class="dropdown-wrap">
+            <button type="button" class="btn-dots-minimal" aria-label="Actions">&#8942;</button>
+            <div class="dropdown-menu">
+              <a href="{% url 'lora_admin:inquiry_delete' inv.pk %}">Delete</a>
+            </div>
+          </div>
+        </td>
       </tr>
       {% empty %}
       <tr>
-        <td colspan="5" class="empty-cell">No inquiries yet. Contact form submissions will appear here.</td>
+        <td colspan="6" class="empty-cell">No inquiries yet. Contact form submissions will appear here.</td>
       </tr>
       {% endfor %}
     </tbody>
