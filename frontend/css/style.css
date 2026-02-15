@@ -1091,6 +1091,7 @@ p {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 1rem;
+  min-width: 0;
 }
 
 /* Prevent date/time inputs from overflowing on tablet and mobile */
@@ -1402,6 +1403,7 @@ p {
 
 .about-content h2 {
   margin: 2rem 0 1rem;
+  text-align: center;
 }
 
 .about-content h2:first-child {
