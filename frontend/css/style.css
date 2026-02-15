@@ -1037,6 +1037,7 @@ p {
   transition: opacity 0.3s ease, visibility 0.3s ease;
   -webkit-overflow-scrolling: touch;
   overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .modal-overlay.open {
@@ -1054,6 +1055,9 @@ p {
   transform: scale(0.95);
   transition: transform 0.3s ease;
   touch-action: pan-y;
+  box-sizing: border-box;
+  overflow-x: hidden;
+  min-width: 0;
 }
 
 .modal-book-visit {
@@ -1061,19 +1065,26 @@ p {
   box-shadow: var(--shadow-hover);
 }
 
-.modal-header {
-  margin-bottom: 1.5rem;
+.modal-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
 }
 
-.modal-header h3 {
-  margin-bottom: 0.5rem;
+.modal-title {
+  margin: 0;
   font-size: 1.35rem;
+  flex: 1;
+  min-width: 0;
+  padding-right: 0.5rem;
 }
 
 .modal-subtitle {
   font-size: 0.95rem;
   color: var(--text-muted);
-  margin: 0;
+  margin: 0 0 1.5rem;
 }
 
 .book-visit-form .form-row-2 {
@@ -1093,6 +1104,7 @@ p {
 
 .book-visit-form .form-group {
   margin-bottom: 1.25rem;
+  min-width: 0;
 }
 
 /* Prevent zoom/movement on mobile when focusing inputs (iOS) */
@@ -1100,6 +1112,7 @@ p {
 .book-visit-form textarea {
   font-size: 16px;
   touch-action: manipulation;
+  min-width: 0;
 }
 
 .book-visit-form label .required { color: #c0392b; }
@@ -1121,22 +1134,26 @@ p {
 }
 
 .modal-close {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  width: 36px;
-  height: 36px;
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
   border: none;
   background: none;
-  font-size: 1.5rem;
+  font-size: 1.75rem;
   color: var(--text-muted);
   cursor: pointer;
   line-height: 1;
   padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
 }
 
 .modal-close:hover {
   color: var(--text-dark);
+  background: var(--bg-light);
 }
 
 .property-occupied-msg {
@@ -1895,7 +1912,7 @@ p {
   }
 
   .modal-content {
-    padding: 1.5rem;
+    padding: 1.25rem;
     margin: 0.5rem;
   }
 
@@ -1905,6 +1922,15 @@ p {
 
   .modal-book-visit {
     max-width: 100%;
+    width: calc(100vw - 1rem);
+  }
+
+  .modal-top {
+    gap: 0.75rem;
+  }
+
+  .modal-title {
+    font-size: 1.2rem;
   }
 }
 
@@ -1924,12 +1950,27 @@ p {
 @media (max-width: 768px) {
   .modal-overlay {
     align-items: flex-start;
-    padding: 1.5rem 1rem 2rem;
+    padding: 1rem 0.5rem 2rem;
     overscroll-behavior: contain;
   }
   .modal-overlay.open .modal-content {
     margin: auto 0;
     flex-shrink: 0;
+    padding: 1.25rem 1rem 1.5rem;
+    max-width: none;
+  }
+  .book-visit-form .form-row-2 .form-group {
+    min-width: 0;
+  }
+}
+
+/* Small phones: tighter modal, prevent horizontal shift */
+@media (max-width: 480px) {
+  .modal-overlay {
+    padding: 0.5rem;
+  }
+  .modal-overlay.open .modal-content {
+    padding: 1rem 0.75rem;
   }
 }
 

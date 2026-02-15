@@ -252,11 +252,11 @@
             const modalHtml = `
               <div class="modal-overlay" id="bookVisitModal" aria-hidden="true">
                 <div class="modal-content modal-book-visit">
-                  <button type="button" class="modal-close" aria-label="Close">&times;</button>
-                  <div class="modal-header">
-                    <h3>Schedule a Property Viewing</h3>
-                    <p class="modal-subtitle">Request a viewing for this property. Our team will contact you to confirm.</p>
+                  <div class="modal-top">
+                    <h3 class="modal-title">Schedule a Property Viewing</h3>
+                    <button type="button" class="modal-close" aria-label="Close">&times;</button>
                   </div>
+                  <p class="modal-subtitle">Request a viewing for this property. Our team will contact you to confirm.</p>
                   <form id="bookVisitForm" class="book-visit-form">
                     <input type="hidden" name="propertyId" value="${property.id}">
                     <div class="form-row form-row-2">
