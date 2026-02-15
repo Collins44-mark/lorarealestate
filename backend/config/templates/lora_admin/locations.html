@@ -18,9 +18,9 @@
     <tbody>
       {% for loc, count in locations_with_count %}
       <tr>
-        <td>{{ loc.name }}</td>
+        <td><a href="{% url 'lora_admin:property_list' %}?location={{ loc.pk }}" class="location-link">{{ loc.name }}</a></td>
         <td>{{ loc.city }}</td>
-        <td>{{ count }}</td>
+        <td><a href="{% url 'lora_admin:property_list' %}?location={{ loc.pk }}" class="location-link">{{ count }}</a></td>
         <td>
           <div class="action-btns">
             <a href="{% url 'lora_admin:location_edit' loc.pk %}" class="btn btn-edit">Edit</a>

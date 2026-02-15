@@ -1216,6 +1216,15 @@ body.lora-admin {
   color: var(--gold);
 }
 
+.location-link {
+  color: var(--accent);
+  font-weight: 500;
+}
+
+.location-link:hover {
+  text-decoration: underline;
+}
+
 
 /* Confirm delete */
 .confirm-delete {

@@ -2,11 +2,14 @@
 
 {% block content %}
 <div class="page-header">
-  <h1>Properties</h1>
+  <h1>{% if location_filter %}Properties in {{ location_filter.name }}, {{ location_filter.city }}{% else %}Properties{% endif %}</h1>
   <div class="page-actions">
-    <a href="{% url 'lora_admin:property_list' %}" class="btn btn-sm{% if not request.GET.type %} active{% endif %}">All</a>
-    <a href="{% url 'lora_admin:property_list' %}?type=rent" class="btn btn-sm{% if request.GET.type == 'rent' %} active{% endif %}">Rent</a>
-    <a href="{% url 'lora_admin:property_list' %}?type=sale" class="btn btn-sm{% if request.GET.type == 'sale' %} active{% endif %}">Buy</a>
+    {% if location_filter %}
+    <a href="{% url 'lora_admin:locations' %}" class="btn btn-sm btn-outline">← Locations</a>
+    {% endif %}
+    <a href="{% url 'lora_admin:property_list' %}{% if location_filter %}?location={{ location_filter.pk }}{% endif %}" class="btn btn-sm{% if not request.GET.type %} active{% endif %}">All</a>
+    <a href="{% url 'lora_admin:property_list' %}?type=rent{% if location_filter %}&location={{ location_filter.pk }}{% endif %}" class="btn btn-sm{% if request.GET.type == 'rent' %} active{% endif %}">Rent</a>
+    <a href="{% url 'lora_admin:property_list' %}?type=sale{% if location_filter %}&location={{ location_filter.pk }}{% endif %}" class="btn btn-sm{% if request.GET.type == 'sale' %} active{% endif %}">Buy</a>
     <a href="{% url 'lora_admin:property_add' %}" class="btn btn-primary">+ Add Property</a>
   </div>
 </div>

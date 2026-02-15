@@ -176,14 +176,22 @@ def dashboard(request):
 def property_list(request):
     properties = Property.objects.select_related("location").order_by("-created_at")
     listing_type = request.GET.get("type")
+    location_id = request.GET.get("location")
+    location_filter = None
     if listing_type == "rent":
         properties = properties.filter(listing_type="rent")
     elif listing_type == "sale":
         properties = properties.filter(listing_type="sale")
+    if location_id:
+        try:
+            location_filter = Location.objects.get(pk=location_id)
+            properties = properties.filter(location=location_filter)
+        except (Location.DoesNotExist, ValueError):
+            pass
     return render(
         request,
         "lora_admin/property_list.html",
-        {"properties": properties, "page_title": "Properties"},
+        {"properties": properties, "page_title": "Properties", "location_filter": location_filter},
     )
 
 
@@ -388,14 +396,10 @@ def property_delete(request, pk):
 def locations_list(request):
     locations = Location.objects.order_by("city", "name")
     locations_with_count = [(loc, loc.properties.count()) for loc in locations]
-    form = LocationForm(request.POST or None)
-    if request.method == "POST" and form.is_valid():
-        form.save()
-        return redirect(reverse("lora_admin:locations"))
     return render(
         request,
         "lora_admin/locations.html",
-        {"locations_with_count": locations_with_count, "form": form, "page_title": "Locations"},
+        {"locations_with_count": locations_with_count, "page_title": "Locations"},
     )
 
 
