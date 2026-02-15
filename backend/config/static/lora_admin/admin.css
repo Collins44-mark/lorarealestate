@@ -423,6 +423,56 @@ body.lora-admin {
   color: var(--text-muted);
 }
 
+.badge-available {
+  background: rgba(52, 152, 219, 0.2);
+  color: #2980b9;
+}
+
+.badge-occupied {
+  background: rgba(192, 57, 43, 0.2);
+  color: var(--danger);
+}
+
+/* Property list status cell */
+.status-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.status-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.status-cell .status-dropdown {
+  margin-left: 0.25rem;
+}
+
+.btn-status-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 28px;
+  height: 28px;
+  padding: 0;
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  background: var(--main-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: color var(--transition), background var(--transition), border-color var(--transition);
+}
+
+.btn-status-toggle:hover {
+  color: var(--accent);
+  background: rgba(212, 175, 55, 0.15);
+  border-color: rgba(212, 175, 55, 0.4);
+}
+
 .badge-pending { background: rgba(212, 175, 55, 0.2); color: var(--gold-muted); }
 .badge-confirmed { background: rgba(39, 174, 96, 0.2); color: var(--success); }
 .badge-completed { background: rgba(39, 174, 96, 0.25); color: var(--success); }

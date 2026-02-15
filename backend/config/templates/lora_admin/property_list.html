@@ -33,9 +33,14 @@
         <td>{{ p.get_listing_type_display }}</td>
         <td>{{ p.currency }} {{ p.price|floatformat:0 }}</td>
         <td>{{ p.location.name }}, {{ p.location.city }}</td>
-        <td>
-          <div class="dropdown-wrap">
-            <button type="button" class="btn-dots-minimal" aria-label="Status actions">&#8942;</button>
+        <td class="status-cell">
+          <div class="status-badges">
+            {% if p.featured %}<span class="badge badge-featured">Featured</span>{% endif %}
+            {% if p.published %}<span class="badge badge-published">Published</span>{% else %}<span class="badge badge-draft">Draft</span>{% endif %}
+            {% if p.availability == 'occupied' or p.availability == 'booked' %}<span class="badge badge-occupied">Occupied</span>{% else %}<span class="badge badge-available">Available</span>{% endif %}
+          </div>
+          <div class="dropdown-wrap status-dropdown">
+            <button type="button" class="btn-status-toggle" aria-label="Change status">▼</button>
             <div class="dropdown-menu">
               <form method="post" action="{% url 'lora_admin:property_toggle_status' p.pk %}{% if request.GET %}?{{ request.GET.urlencode }}{% endif %}" class="status-menu-form">
                 {% csrf_token %}

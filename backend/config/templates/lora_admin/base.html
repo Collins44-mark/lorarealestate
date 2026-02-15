@@ -58,7 +58,7 @@
     toggle.addEventListener('click', function() { setSidebar(!open); });
   })();
   document.querySelectorAll('.dropdown-wrap').forEach(function(wrap) {
-    var btn = wrap.querySelector('.btn-dots, .btn-dots-trigger, .btn-dots-minimal');
+    var btn = wrap.querySelector('.btn-dots, .btn-dots-trigger, .btn-dots-minimal, .btn-status-toggle');
     if (!btn) return;
     btn.addEventListener('click', function(e) {
       e.stopPropagation();
