@@ -379,6 +379,14 @@ def property_toggle_status(request, pk):
         prop.save()
         status = "published" if prop.published else "draft"
         messages.success(request, f'"{prop.title}" is now {status}.')
+    elif field == "available":
+        prop.availability = "available"
+        prop.save()
+        messages.success(request, f'"{prop.title}" is now available for bookings.')
+    elif field == "occupied":
+        prop.availability = "occupied"
+        prop.save()
+        messages.success(request, f'"{prop.title}" is marked occupied—Book a Visit disabled on website.')
     return _property_list_redirect(request)
 
 

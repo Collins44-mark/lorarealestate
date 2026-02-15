@@ -51,6 +51,20 @@
                   Publish{% if p.published %} ✓{% endif %}
                 </button>
               </form>
+              <form method="post" action="{% url 'lora_admin:property_toggle_status' p.pk %}{% if request.GET %}?{{ request.GET.urlencode }}{% endif %}" class="status-menu-form">
+                {% csrf_token %}
+                <input type="hidden" name="field" value="available">
+                <button type="submit" class="dropdown-item-btn">
+                  Available{% if p.availability == 'available' %} ✓{% endif %}
+                </button>
+              </form>
+              <form method="post" action="{% url 'lora_admin:property_toggle_status' p.pk %}{% if request.GET %}?{{ request.GET.urlencode }}{% endif %}" class="status-menu-form">
+                {% csrf_token %}
+                <input type="hidden" name="field" value="occupied">
+                <button type="submit" class="dropdown-item-btn">
+                  Occupied{% if p.availability == 'occupied' or p.availability == 'booked' %} ✓{% endif %}
+                </button>
+              </form>
             </div>
           </div>
         </td>
