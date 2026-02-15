@@ -28,11 +28,11 @@
   </aside>
   <main class="lora-main">
     {% if messages %}
-    <ul class="lora-messages">
+    <div class="lora-toast-wrap" role="alert" aria-live="polite">
       {% for message in messages %}
-      <li class="message message-{{ message.tags|default:'info' }}">{{ message }}</li>
+      <div class="lora-toast message-{{ message.tags|default:'info' }}">{{ message }}</div>
       {% endfor %}
-    </ul>
+    </div>
     {% endif %}
     {% block content %}{% endblock %}
   </main>
@@ -72,6 +72,20 @@
     if (e.target.closest('.dropdown-menu')) return;
     document.querySelectorAll('.dropdown-wrap.open').forEach(function(o) { o.classList.remove('open'); });
   });
+  (function() {
+    var wrap = document.querySelector('.lora-toast-wrap');
+    if (!wrap) return;
+    var toasts = wrap.querySelectorAll('.lora-toast');
+    toasts.forEach(function(t) {
+      setTimeout(function() {
+        t.classList.add('toast-fade-out');
+        setTimeout(function() {
+          t.remove();
+          if (wrap.querySelectorAll('.lora-toast').length === 0) wrap.remove();
+        }, 300);
+      }, 4000);
+    });
+  })();
   </script>
   {% block extrajs %}{% endblock %}
 </body>
