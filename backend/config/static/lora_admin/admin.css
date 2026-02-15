@@ -479,6 +479,30 @@ body.lora-admin {
 .badge-cancelled { background: rgba(192, 57, 43, 0.2); color: var(--danger); }
 
 /* Booking contact buttons */
+/* Bookings table - clear columns */
+.bookings-table .col-status,
+.bookings-table .col-contact,
+.bookings-table .col-actions {
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.bookings-table .col-status .status-cell {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.bookings-table .col-contact .booking-contact-actions {
+  display: inline-flex;
+}
+
+.booking-actions-cell {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
 .booking-contact-actions { display: flex; gap: 0.4rem; flex-wrap: wrap; }
 .btn-contact, .btn-whatsapp {
   display: inline-flex;
@@ -1370,8 +1394,31 @@ body.lora-admin {
   .detail-grid { grid-template-columns: 1fr; }
   .form-row-3 { grid-template-columns: 1fr; }
   .property-images-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-  .table-container { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-  .data-table { min-width: 700px; }
+  .table-container:not(.bookings-table-wrap) { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .data-table:not(.bookings-table) { min-width: 700px; }
+}
+
+/* Bookings: card layout on smaller screens */
+@media (max-width: 900px) {
+  .bookings-table-wrap { overflow: visible; }
+  .bookings-table { min-width: 0; display: block; }
+  .bookings-table thead { display: none; }
+  .bookings-table tbody { display: block; }
+  .bookings-table tr { display: block; margin-bottom: 1rem; padding: 1.25rem; background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; box-shadow: var(--shadow-soft); }
+  .bookings-table tr:last-child { margin-bottom: 0; }
+  .bookings-table td { display: block; padding: 0.5rem 0; border: none; vertical-align: top; white-space: normal; }
+  .bookings-table td:before { display: block; font-size: 0.75rem; font-weight: 600; color: var(--text-muted); text-transform: capitalize; margin-bottom: 0.25rem; }
+  .bookings-table .col-guest:before { content: "Guest"; }
+  .bookings-table .col-property:before { content: "Property"; }
+  .bookings-table .col-datetime:before { content: "Date & Time"; }
+  .bookings-table .col-status:before { content: "Status"; }
+  .bookings-table .col-contact:before { content: "Contact"; }
+  .bookings-table .col-actions:before { content: "Actions"; }
+  .bookings-table .empty-cell { padding: 2rem; text-align: center; }
+  .bookings-table .empty-cell:before { display: none; }
+  .bookings-table .col-status .status-cell { display: inline-flex; flex-wrap: wrap; }
+  .bookings-table .col-contact .booking-contact-actions { display: flex; flex-wrap: wrap; }
+  .bookings-table .col-actions .booking-actions-cell { display: flex; flex-wrap: wrap; gap: 0.5rem; }
 }
 
 @media (max-width: 768px) {
@@ -1393,10 +1440,11 @@ body.lora-admin {
 }
 
 @media (max-width: 600px) {
-  .data-table { min-width: 560px; font-size: 0.9rem; }
-  .data-table th, .data-table td { padding: 0.6rem 0.8rem; }
-  .booking-contact-actions { flex-direction: column; }
-  .booking-contact-actions .btn { width: 100%; min-height: 40px; }
+  .data-table:not(.bookings-table) { min-width: 560px; font-size: 0.9rem; }
+  .data-table:not(.bookings-table) th,
+  .data-table:not(.bookings-table) td { padding: 0.6rem 0.8rem; }
+  .bookings-table .booking-contact-actions { flex-direction: row; }
+  .bookings-table .booking-contact-actions .btn { min-height: 40px; }
   .page-header h1 { font-size: 1.35rem; }
   .page-subtitle { font-size: 0.9rem; }
 }
@@ -1404,7 +1452,8 @@ body.lora-admin {
 @media (max-width: 400px) {
   .lora-main { padding: 0.75rem; }
   .page-header { padding: 1rem 0.75rem; }
-  .data-table { min-width: 480px; }
+  .data-table:not(.bookings-table) { min-width: 480px; }
+  .bookings-table tr { padding: 1rem; }
 }
 
 /* Touch targets - minimum 44px for accessibility */
