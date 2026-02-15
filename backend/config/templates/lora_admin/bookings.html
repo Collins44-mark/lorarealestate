@@ -21,77 +21,54 @@
   </form>
 </div>
 
-<div class="table-container bookings-table-wrap">
-  <table class="data-table bookings-table">
-    <thead>
-      <tr>
-        <th class="col-guest">Guest</th>
-        <th class="col-property">Property</th>
-        <th class="col-datetime">Date & Time</th>
-        <th class="col-status">Status</th>
-        <th class="col-contact">Contact</th>
-        <th class="col-actions">Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for b in bookings %}
-      <tr>
-        <td class="col-guest">
-          <strong>{{ b.full_name }}</strong><br>
-          <small>{{ b.email }}</small>
-          {% if b.phone %}<br><small class="text-phone">{{ b.phone }}</small>{% endif %}
-        </td>
-        <td class="col-property">
-          <a href="{% url 'lora_admin:property_detail' b.property_id %}">{{ b.property.title }}</a>
-        </td>
-        <td class="col-datetime">{{ b.preferred_date }}<br><small>{{ b.preferred_time }}</small></td>
-        <td class="col-status">
-          <div class="status-cell">
-            <span class="badge badge-{{ b.status }}">{{ b.get_status_display }}</span>
-            <div class="dropdown-wrap status-dropdown">
-              <button type="button" class="btn-status-toggle" aria-label="Change status">▼</button>
-              <div class="dropdown-menu">
-                {% for val, label in status_choices %}
-                <form method="post" action="{% url 'lora_admin:booking_update_status' b.pk %}{% if status_filter %}?status={{ status_filter }}{% endif %}" class="status-menu-form">
-                  {% csrf_token %}
-                  <input type="hidden" name="status" value="{{ val }}">
-                  <input type="hidden" name="next_status_filter" value="{{ status_filter }}">
-                  <button type="submit" class="dropdown-item-btn">{{ label }}{% if b.status == val %} ✓{% endif %}</button>
-                </form>
-                {% endfor %}
-              </div>
-            </div>
-          </div>
-        </td>
-        <td class="col-contact">
-          <div class="booking-contact-actions">
-            {% if b.phone %}
-            <a href="tel:{{ b.phone }}" class="btn btn-sm btn-contact" title="Call">📞 Call</a>
-            <a href="https://wa.me/{{ b.phone|phone_digits }}" class="btn btn-sm btn-whatsapp" target="_blank" rel="noopener" title="WhatsApp">WhatsApp</a>
-            {% else %}
-            <a href="mailto:{{ b.email }}" class="btn btn-sm btn-contact" title="Email">✉️ Email</a>
-            {% endif %}
-          </div>
-        </td>
-        <td class="col-actions">
-          <div class="booking-actions-cell">
-            <a href="{% url 'lora_admin:booking_detail' b.pk %}" class="btn btn-sm btn-outline">View</a>
-            <div class="dropdown-wrap">
-              <button type="button" class="btn-dots-minimal" aria-label="More actions">&#8942;</button>
-              <div class="dropdown-menu">
-                <a href="{% url 'lora_admin:booking_detail' b.pk %}">View</a>
-                <a href="{% url 'lora_admin:booking_delete' b.pk %}{% if status_filter %}?status={{ status_filter }}{% endif %}">Delete</a>
-              </div>
-            </div>
-          </div>
-        </td>
-      </tr>
-      {% empty %}
-      <tr>
-        <td colspan="6" class="empty-cell">No bookings yet. Visit requests from the website will appear here.</td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+<div class="bookings-list">
+  {% for b in bookings %}
+  <article class="booking-card">
+    <div class="booking-card-section">
+      <span class="booking-label">Guest</span>
+      <strong>{{ b.full_name }}</strong>
+      <small>{{ b.email }}</small>
+      {% if b.phone %}<small class="text-phone">{{ b.phone }}</small>{% endif %}
+    </div>
+    <div class="booking-card-section">
+      <span class="booking-label">Property</span>
+      <a href="{% url 'lora_admin:property_detail' b.property_id %}">{{ b.property.title }}</a>
+    </div>
+    <div class="booking-card-section">
+      <span class="booking-label">Date & Time</span>
+      <span>{{ b.preferred_date }} {{ b.preferred_time }}</span>
+    </div>
+    <div class="booking-card-section">
+      <span class="booking-label">Status</span>
+      <form method="post" action="{% url 'lora_admin:booking_update_status' b.pk %}{% if status_filter %}?status={{ status_filter }}{% endif %}" class="booking-status-inline">
+        {% csrf_token %}
+        <input type="hidden" name="next_status_filter" value="{{ status_filter }}">
+        <select name="status" class="form-input form-select form-select-sm" onchange="this.form.submit()">
+          {% for val, label in status_choices %}
+          <option value="{{ val }}" {% if b.status == val %}selected{% endif %}>{{ label }}</option>
+          {% endfor %}
+        </select>
+      </form>
+    </div>
+    <div class="booking-card-section">
+      <span class="booking-label">Contact</span>
+      {% if b.phone %}
+      <a href="tel:{{ b.phone }}" class="btn btn-sm btn-contact" title="Call">📞 Call</a>
+      <a href="https://wa.me/{{ b.phone|phone_digits }}" class="btn btn-sm btn-whatsapp" target="_blank" rel="noopener" title="WhatsApp">WhatsApp</a>
+      {% else %}
+      <a href="mailto:{{ b.email }}" class="btn btn-sm btn-contact" title="Email">✉️ Email</a>
+      {% endif %}
+    </div>
+    <div class="booking-card-section booking-actions">
+      <span class="booking-label">Actions</span>
+      <div class="booking-actions-btns">
+        <a href="{% url 'lora_admin:booking_detail' b.pk %}" class="btn btn-sm btn-outline">View</a>
+        <a href="{% url 'lora_admin:booking_delete' b.pk %}{% if status_filter %}?status={{ status_filter }}{% endif %}" class="btn btn-sm btn-outline btn-delete">Delete</a>
+      </div>
+    </div>
+  </article>
+  {% empty %}
+  <div class="bookings-empty">No bookings yet. Visit requests from the website will appear here.</div>
+  {% endfor %}
 </div>
 {% endblock %}
