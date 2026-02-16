@@ -451,6 +451,17 @@ p {
   border-color: var(--accent);
 }
 
+/* Hide number input spinners so customers type their own amount */
+.filter-group input[type="number"]::-webkit-inner-spin-button,
+.filter-group input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.filter-group input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
 /* Price range: min + max stacked in same group */
 .filter-group .price-row {
   display: grid;
