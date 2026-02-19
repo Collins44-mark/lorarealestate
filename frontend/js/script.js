@@ -103,11 +103,15 @@ function setActiveNav() {
 }
 
 /**
- * Format price for display (TZS - Tanzanian Shilling)
+ * Format price for display. currency: 'USD' or 'TZS' (default TZS)
  */
-function formatPrice(price) {
+function formatPrice(price, currency) {
   const n = typeof price === 'string' ? Number(price) : price;
   if (!Number.isFinite(n)) return '';
+  const c = (currency || 'TZS').toUpperCase();
+  if (c === 'USD') {
+    return '$' + n.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+  }
   if (n >= 1000000000) {
     return (n / 1000000000).toFixed(1).replace(/\.0$/, '') + 'B TZS';
   }
@@ -138,18 +142,19 @@ function normalizeApiList(data) {
  * Create property card HTML
  */
 function createPropertyCard(property) {
+  const currency = property.currency || 'TZS';
   const price = property.listing_type === 'sale'
-    ? formatPrice(property.price)
-    : `${formatPrice(property.price)}/month`;
+    ? formatPrice(property.price, currency)
+    : `${formatPrice(property.price, currency)}/month`;
   const badgeClass = property.listing_type === 'sale' ? 'badge-sale' : 'badge-rent';
   const badgeText = property.listing_type === 'sale' ? 'For Sale' : 'For Rent';
   const isOccupied = property.availability === 'occupied' || property.availability === 'booked';
-  const features = property.bedrooms && property.area_size
-    ? `<div class="property-features">
-         <span>${property.bedrooms} Beds</span>
-         <span>${property.bathrooms} Baths</span>
-         <span>${property.area_size} m²</span>
-       </div>`
+  const featureParts = [];
+  if (property.bedrooms != null && property.bedrooms !== '') featureParts.push(`<span>${property.bedrooms} Beds</span>`);
+  if (property.bathrooms != null && property.bathrooms !== '') featureParts.push(`<span>${property.bathrooms} Baths</span>`);
+  if (property.area_size != null && property.area_size !== '') featureParts.push(`<span>${property.area_size} m²</span>`);
+  const features = featureParts.length
+    ? `<div class="property-features">${featureParts.join('')}</div>`
     : '';
 
   const imageHtml = property.main_image

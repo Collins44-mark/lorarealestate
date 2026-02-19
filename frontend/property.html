@@ -131,9 +131,10 @@
         try {
           const property = await apiGet(`/api/properties/${encodeURIComponent(id)}/`);
 
+          const currency = property.currency || 'TZS';
           const priceText = property.listing_type === 'sale'
-            ? formatPrice(property.price)
-            : formatPrice(property.price) + '/month';
+            ? formatPrice(property.price, currency)
+            : formatPrice(property.price, currency) + '/month';
           const badgeClass = property.listing_type === 'sale' ? 'badge-sale' : 'badge-rent';
           const badgeText = property.listing_type === 'sale' ? 'For Sale' : 'For Rent';
           const locationText = property.location ? [property.location.name, property.location.city].filter(Boolean).join(', ') : '';
@@ -167,6 +168,25 @@
 
           const videoHtml = getVideoHtml(property.video_url);
 
+          const hasVal = (v) => v != null && v !== '';
+          const featureListParts = [];
+          if (hasVal(property.bedrooms)) featureListParts.push(`<span><strong>${property.bedrooms}</strong> Bedrooms</span>`);
+          if (hasVal(property.bathrooms)) featureListParts.push(`<span><strong>${property.bathrooms}</strong> Bathrooms</span>`);
+          if (hasVal(property.area_size)) featureListParts.push(`<span><strong>${property.area_size} m²</strong> Size</span>`);
+          const featureListHtml = featureListParts.length
+            ? `<div class="property-features-list">${featureListParts.join('')}</div>`
+            : '';
+
+          const detailRows = [
+            '<div class="detail-item"><strong>Property ID</strong><span>#' + property.id + '</span></div>',
+            '<div class="detail-item"><strong>Price</strong><span>' + priceText + '</span></div>'
+          ];
+          if (locationText) detailRows.push('<div class="detail-item"><strong>Location</strong><span>' + locationText + '</span></div>');
+          if (hasVal(property.area_size)) detailRows.push('<div class="detail-item"><strong>Size</strong><span>' + property.area_size + ' m²</span></div>');
+          if (hasVal(property.bedrooms)) detailRows.push('<div class="detail-item"><strong>Bedrooms</strong><span>' + property.bedrooms + '</span></div>');
+          if (hasVal(property.bathrooms)) detailRows.push('<div class="detail-item"><strong>Bathrooms</strong><span>' + property.bathrooms + '</span></div>');
+          detailRows.push('<div class="detail-item"><strong>Availability</strong><span>' + (isOccupied ? 'Occupied' : 'Available') + '</span></div>');
+
           container.innerHTML = `
             <div class="property-gallery">
               <div class="property-gallery-main">
@@ -194,11 +214,7 @@
                   </div>
                 </div>
               </div>
-              <div class="property-features-list">
-                <span><strong>${property.bedrooms ?? '-'}</strong> Bedrooms</span>
-                <span><strong>${property.bathrooms ?? '-'}</strong> Bathrooms</span>
-                <span><strong>${property.area_size ?? '-'} m²</strong> Size</span>
-              </div>
+              ${featureListHtml}
               ${videoHtml}
               <div class="property-description">
                 <h2>Full Description</h2>
@@ -207,13 +223,7 @@
               <div class="property-details-summary">
                 <h2>Property Details</h2>
                 <div class="details-grid">
-                  <div class="detail-item"><strong>Property ID</strong><span>#${property.id}</span></div>
-                  <div class="detail-item"><strong>Price</strong><span>${priceText}</span></div>
-                  <div class="detail-item"><strong>Location</strong><span>${locationText}</span></div>
-                  <div class="detail-item"><strong>Size</strong><span>${property.area_size ?? '-'} m²</span></div>
-                  <div class="detail-item"><strong>Bedrooms</strong><span>${property.bedrooms ?? '-'}</span></div>
-                  <div class="detail-item"><strong>Bathrooms</strong><span>${property.bathrooms ?? '-'}</span></div>
-                  <div class="detail-item"><strong>Availability</strong><span>${isOccupied ? 'Occupied' : 'Available'}</span></div>
+                  ${detailRows.join('')}
                 </div>
               </div>
               <div class="property-all-images">

@@ -18,6 +18,10 @@ class Property(models.Model):
         OCCUPIED = "occupied", "Occupied"
         BOOKED = "booked", "Booked"
 
+    class Currency(models.TextChoices):
+        USD = "USD", "USD"
+        TZS = "TZS", "TZS"
+
     title = models.CharField(max_length=255)
     description = models.TextField()
 
@@ -25,7 +29,7 @@ class Property(models.Model):
     listing_type = models.CharField(max_length=10, choices=ListingType.choices)
 
     price = models.DecimalField(max_digits=14, decimal_places=2, validators=[MinValueValidator(0)])
-    currency = models.CharField(max_length=12, default="TZS")
+    currency = models.CharField(max_length=12, choices=Currency.choices, default=Currency.TZS)
 
     location = models.ForeignKey("locations.Location", on_delete=models.PROTECT, related_name="properties")
 
