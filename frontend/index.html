@@ -67,10 +67,17 @@
         </select>
       </div>
       <div class="filter-group">
-        <label for="minPrice">Price Range (TZS)</label>
-        <div class="price-row">
-          <input type="number" name="minPrice" id="minPrice" placeholder="Min amount" min="0" step="100000" inputmode="numeric">
-          <input type="number" name="maxPrice" id="maxPrice" placeholder="Max amount" min="0" step="100000" inputmode="numeric">
+        <label for="priceCurrency">Price Range</label>
+        <div class="price-filter-row">
+          <select name="priceCurrency" id="priceCurrency" aria-label="Currency">
+            <option value="">Any currency</option>
+            <option value="TZS">TZS</option>
+            <option value="USD">USD</option>
+          </select>
+          <div class="price-row">
+            <input type="number" name="minPrice" id="minPrice" placeholder="Min" min="0" step="1" inputmode="numeric">
+            <input type="number" name="maxPrice" id="maxPrice" placeholder="Max" min="0" step="1" inputmode="numeric">
+          </div>
         </div>
       </div>
       <div class="filter-group">

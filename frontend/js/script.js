@@ -252,8 +252,10 @@ function initQuickFilter() {
     const availability = form.querySelector('[name="availability"]')?.value;
     const minPrice = form.querySelector('[name="minPrice"]')?.value;
     const maxPrice = form.querySelector('[name="maxPrice"]')?.value;
+    const priceCurrency = form.querySelector('[name="priceCurrency"]')?.value;
     if (location) params.set('location', location);
     if (availability) params.set('availability', availability);
+    if (priceCurrency) params.set('currency', priceCurrency);
     if (minPrice) params.set('min_price', minPrice);
     if (maxPrice) params.set('max_price', maxPrice);
     window.location.href = page + (params.toString() ? '?' + params.toString() : '');

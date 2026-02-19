@@ -40,6 +40,22 @@
   <div class="filter-bar container">
     <form id="buyFilterForm" class="filter-form filter-form-inline">
       <div class="filter-group">
+        <label for="priceCurrency">Price (currency)</label>
+        <select name="priceCurrency" id="priceCurrency" aria-label="Currency">
+          <option value="">All</option>
+          <option value="TZS">TZS</option>
+          <option value="USD">USD</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label for="minPrice">Min price</label>
+        <input type="number" name="minPrice" id="minPrice" placeholder="Min" min="0" step="1" inputmode="numeric" class="filter-price-input">
+      </div>
+      <div class="filter-group">
+        <label for="maxPrice">Max price</label>
+        <input type="number" name="maxPrice" id="maxPrice" placeholder="Max" min="0" step="1" inputmode="numeric" class="filter-price-input">
+      </div>
+      <div class="filter-group">
         <label for="availability">Availability</label>
         <select name="availability" id="availability">
           <option value="">All</option>
@@ -109,13 +125,25 @@
     document.addEventListener('DOMContentLoaded', () => {
       const params = new URLSearchParams(window.location.search);
       const availabilityEl = document.getElementById('availability');
+      const priceCurrencyEl = document.getElementById('priceCurrency');
+      const minPriceEl = document.getElementById('minPrice');
+      const maxPriceEl = document.getElementById('maxPrice');
       if (availabilityEl) availabilityEl.value = params.get('availability') || '';
+      if (priceCurrencyEl) priceCurrencyEl.value = params.get('currency') || '';
+      if (minPriceEl) minPriceEl.value = params.get('min_price') || '';
+      if (maxPriceEl) maxPriceEl.value = params.get('max_price') || '';
 
       document.getElementById('buyFilterForm')?.addEventListener('submit', (e) => {
         e.preventDefault();
-        const av = availabilityEl?.value?.trim() || '';
         const url = new URL(window.location.href);
+        const av = availabilityEl?.value?.trim() || '';
+        const cur = priceCurrencyEl?.value?.trim() || '';
+        const minP = minPriceEl?.value?.trim() || '';
+        const maxP = maxPriceEl?.value?.trim() || '';
         if (av) url.searchParams.set('availability', av); else url.searchParams.delete('availability');
+        if (cur) url.searchParams.set('currency', cur); else url.searchParams.delete('currency');
+        if (minP) url.searchParams.set('min_price', minP); else url.searchParams.delete('min_price');
+        if (maxP) url.searchParams.set('max_price', maxP); else url.searchParams.delete('max_price');
         window.location.search = url.searchParams.toString();
       });
 
@@ -124,10 +152,12 @@
           const location = (params.get('location') || '').trim();
           const min_price = (params.get('min_price') || '').trim();
           const max_price = (params.get('max_price') || '').trim();
+          const currency = (params.get('currency') || '').trim();
           const availability = (params.get('availability') || '').trim();
           const items = await fetchProperties({
             listing_type: 'sale',
             location: location || undefined,
+            currency: currency || undefined,
             min_price: min_price || undefined,
             max_price: max_price || undefined,
             availability: availability || undefined

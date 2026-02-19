@@ -8,6 +8,7 @@ class PropertyFilter(django_filters.FilterSet):
     featured = django_filters.BooleanFilter(field_name="featured")
     property_type = django_filters.CharFilter(field_name="property_type")
     location = django_filters.CharFilter(method="filter_location")
+    currency = django_filters.CharFilter(field_name="currency")
     min_price = django_filters.NumberFilter(field_name="price", lookup_expr="gte")
     max_price = django_filters.NumberFilter(field_name="price", lookup_expr="lte")
     availability = django_filters.CharFilter(method="filter_availability")
@@ -22,7 +23,7 @@ class PropertyFilter(django_filters.FilterSet):
 
     class Meta:
         model = Property
-        fields = ("listing_type", "featured", "property_type", "location", "min_price", "max_price", "availability")
+        fields = ("listing_type", "featured", "property_type", "location", "currency", "min_price", "max_price", "availability")
 
     def filter_location(self, qs, name, value):
         v = (value or "").strip()
