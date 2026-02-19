@@ -929,6 +929,11 @@ p {
   margin-bottom: 0.75rem;
 }
 
+/* Preserve line breaks as entered in admin (no collapsing to paragraph) */
+.property-description-text {
+  white-space: pre-line;
+}
+
 /* Property video */
 .property-video {
   margin: 2rem 0;
